@@ -77,7 +77,6 @@ export function LoginAppView() {
         color="inherit"
         size="large"
         variant="contained"
-        loadingIndicator="Giriş Yap..."
         onClick={handleLogin}
       >
         Giriş Yap
