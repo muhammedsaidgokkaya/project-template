@@ -1,7 +1,10 @@
+import React, { useEffect, useState } from 'react';
 import { z as zod } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
+
+import { CONFIG } from 'src/global-config';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -18,6 +21,16 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 export const UpdateUserSchema = zod.object({
+  name: zod.string().min(1, { message: 'Organizasyon Adı zorunludur!' }),
+  orgAddress: zod.string().min(1, { message: 'Organizasyon Adresi zorunludur!' }),
+  zipCode: zod
+    .string()
+    .min(1, { message: 'Zip Kodu zorunludur!' })
+    .regex(/^\d+$/, { message: 'Zip Kodu sadece sayısal değerlerden oluşmalıdır!' }),
+  taskNumber: zod
+    .string()
+    .min(1, { message: 'Vergi No zorunludur!' })
+    .regex(/^\d+$/, { message: 'Vergi No sadece sayısal değerlerden oluşmalıdır!' }),
   firstName: zod.string().min(1, { message: 'Ad zorunludur!' }),
   lastName: zod.string().min(1, { message: 'Soyad zorunludur!' }),
   mail: zod
@@ -28,14 +41,35 @@ export const UpdateUserSchema = zod.object({
   title: zod.string().min(1, { message: 'Ünvan zorunludur!' }),
   dateOfBirth: zod.string().min(1, { message: 'Doğum Tarihi zorunludur!' }),
   address: zod.string().min(1, { message: 'Adres zorunludur!' }),
-  gender: zod.enum(['male', 'female'], { message: 'Cinsiyet seçmek zorunludur!' }),
+  gender: zod.enum(['E', 'K'], { message: 'Cinsiyet seçmek zorunludur!' }),
 });
 
 // ----------------------------------------------------------------------
 
 export function AccountGeneral() {
 
-  const currentUser = {
+  const [currentUser, setCurrentUser] = useState({
+    name: '',
+    orgAddress: '',
+    zipCode: '',
+    taskNumber: '',
+    photoURL: '',
+    firstName: '',
+    lastName: '',
+    mail: '',
+    phone: '',
+    title: '',
+    dateOfBirth: '',
+    address: '',
+    gender: '',
+  });
+
+  const defaultValues = {
+    name: '',
+    orgAddress: '',
+    zipCode: '',
+    taskNumber: '',
+    photoURL: '',
     firstName: '',
     lastName: '',
     mail: '',
@@ -46,16 +80,32 @@ export function AccountGeneral() {
     gender: '',
   };
 
-  const defaultValues = {
-    firstName: '',
-    lastName: '',
-    mail: '',
-    phone: '',
-    title: '',
-    dateOfBirth: '',
-    address: '',
-    gender: '',
-  };
+  // Fetch user data when the component mounts
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('jwtToken');
+        const response = await fetch(`${CONFIG.apiUrl}/Organization/user`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Kullanıcı verisi alınamadı!');
+        }
+
+        const userData = await response.json();
+        setCurrentUser(userData);
+      } catch (error) {
+        toast.error('Veri alınırken bir hata oluştu');
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const methods = useForm({
     mode: 'all',
@@ -71,16 +121,45 @@ export function AccountGeneral() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      toast.success('Update success!');
-      console.info('DATA', data);
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Organization/update-user`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name,
+          orgAddress: data.orgAddress,
+          zipCode: data.zipCode,
+          taskNumber: data.taskNumber,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          mail: data.mail,
+          phone: data.phone,
+          title: data.title,
+          dateOfBirth: data.dateOfBirth,
+          address: data.address,
+          gender: data.gender
+        })
+      });
+      if (!response.ok) {
+        let errorResponse = null;
+        try {
+          errorResponse = await response.json();
+        } catch (parseError) {
+          errorResponse = { message: "Sunucudan beklenmeyen bir hata döndü." };
+        }
+        
+        throw new Error("Bir hata oluştu!");
+      }
+      toast.success("Kullanıcı başarıyla güncellendi!");
     } catch (error) {
-      console.error(error);
+      toast.error("Bir hata oluştu!");
     }
   });
 
   return (
-    <>
       <Form methods={methods} onSubmit={onSubmit}>
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 12 }}>
@@ -93,34 +172,15 @@ export function AccountGeneral() {
                   gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
                 }}
               >
-                <Field.Text name="firstName" label="Ad" />
-                <Field.Text name="lastName" label="Soyad" />
-                <Field.Text name="mail" label="E-Posta" />
-                <Field.Phone name="phone" label="Telefon" />
-                <Field.Text name="title" label="Ünvan" />
-                <Field.DatePicker name="dateOfBirth" label="Doğum Tarihi" />
-                <Field.Text name="address" multiline rows={4} label="Adres" />
-                <Field.RadioGroup
-                  name="gender"
-                  label="Cinsiyet"
-                  options={[
-                    { value: 'male', label: 'Erkek' },
-                    { value: 'female', label: 'Kız' },
-                  ]}
-                />
+                <Field.Text name="name" label="Organizasyon Adı" />
+                <Field.Text name="taskNumber" label="Vergi No" />
+                <Field.Text name="orgAddress" multiline rows={4} label="Adres" />
+                <Field.Text name="zipCode" label="Zip Kodu" />
               </Box>
-
-              <Stack spacing={3} sx={{ mt: 3, alignItems: 'flex-end' }}>
-                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                  Kaydet
-                </LoadingButton>
-              </Stack>
             </Card>
           </Grid>
         </Grid>
-      </Form>
-      <Form methods={methods} onSubmit={onSubmit}>
-        <Grid container spacing={3} sx={{ mt: 5 }}>
+        <Grid container spacing={3} sx={{ mt: 3 }}>
           <Grid size={{ xs: 12, md: 4 }}>
             <Card
               sx={{
@@ -173,8 +233,8 @@ export function AccountGeneral() {
                   name="gender"
                   label="Cinsiyet"
                   options={[
-                    { value: 'male', label: 'Erkek' },
-                    { value: 'female', label: 'Kız' },
+                    { value: 'E', label: 'Erkek' },
+                    { value: 'K', label: 'Kız' },
                   ]}
                 />
               </Box>
@@ -188,7 +248,5 @@ export function AccountGeneral() {
           </Grid>
         </Grid>
       </Form>
-      
-    </>
   );
 }

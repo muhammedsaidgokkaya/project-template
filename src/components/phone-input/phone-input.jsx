@@ -31,8 +31,10 @@ export const PhoneInput = forwardRef((props, ref) => {
 
   const defaultCountryCode = getCountryCode(value, inputCountryCode);
 
+  console.log(defaultCountryCode);
+
   const [searchCountry, setSearchCountry] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState(defaultCountryCode);
+  const [selectedCountry, setSelectedCountry] = useState('TR');
 
   const hasLabel = !!label;
 
@@ -44,9 +46,9 @@ export const PhoneInput = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!selectedCountry) {
-      setSelectedCountry(defaultCountryCode);
+      setSelectedCountry('TR');
     }
-  }, [defaultCountryCode, selectedCountry]);
+  }, ['TR', selectedCountry]);
 
   const handleClickCountry = (inputValue) => {
     startTransition(() => {
@@ -79,7 +81,7 @@ export const PhoneInput = forwardRef((props, ref) => {
         <CountryListPopover
           countries={countries}
           searchCountry={searchCountry}
-          countryCode={'TR'}
+          countryCode={defaultCountryCode}
           onClickCountry={handleClickCountry}
           onSearchCountry={handleSearchCountry}
           sx={{

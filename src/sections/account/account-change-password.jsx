@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useBoolean } from 'minimal-shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { CONFIG } from 'src/global-config';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
@@ -17,19 +19,11 @@ import { Form, Field } from 'src/components/hook-form';
 
 export const ChangePassWordSchema = zod
   .object({
-    oldPassword: zod
-      .string()
-      .min(1, { message: 'Password is required!' })
-      .min(6, { message: 'Password must be at least 6 characters!' }),
-    newPassword: zod.string().min(1, { message: 'New password is required!' }),
-    confirmNewPassword: zod.string().min(1, { message: 'Confirm password is required!' }),
-  })
-  .refine((data) => data.oldPassword !== data.newPassword, {
-    message: 'New password must be different than old password',
-    path: ['newPassword'],
+    newPassword: zod.string().min(1, { message: 'Yeni şifre gerekiyor!' }).min(6, { message: 'Şifre en az 6 karakter olmalıdır!' }),
+    confirmNewPassword: zod.string().min(1, { message: 'Şifreyi onaylamanız gerekiyor!' }),
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
-    message: 'Passwords do not match!',
+    message: 'Şifreler uyuşmuyor!',
     path: ['confirmNewPassword'],
   });
 
@@ -39,7 +33,6 @@ export function AccountChangePassword() {
   const showPassword = useBoolean();
 
   const defaultValues = {
-    oldPassword: '',
     newPassword: '',
     confirmNewPassword: '',
   };
@@ -58,12 +51,31 @@ export function AccountChangePassword() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      toast.success('Update success!');
-      console.info('DATA', data);
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Organization/update-user-password`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newPassword: data.newPassword
+        })
+      });
+      if (!response.ok) {
+        let errorResponse = null;
+        try {
+          errorResponse = await response.json();
+        } catch (parseError) {
+          errorResponse = { message: "Sunucudan beklenmeyen bir hata döndü." };
+        }
+        
+        throw new Error("Bir hata oluştu!");
+      }
+      toast.success("Şifre başarıyla güncellendi!");
+      window.location.href = "/dashboard/user/account";
     } catch (error) {
-      console.error(error);
+      toast.error("Bir hata oluştu!");
     }
   });
 
@@ -78,27 +90,8 @@ export function AccountChangePassword() {
         }}
       >
         <Field.Text
-          name="oldPassword"
-          type={showPassword.value ? 'text' : 'password'}
-          label="Old password"
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={showPassword.onToggle} edge="end">
-                    <Iconify
-                      icon={showPassword.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
-                    />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-
-        <Field.Text
           name="newPassword"
-          label="New password"
+          label="Yeni Şifre"
           type={showPassword.value ? 'text' : 'password'}
           slotProps={{
             input: {
@@ -115,7 +108,7 @@ export function AccountChangePassword() {
           }}
           helperText={
             <Box component="span" sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
-              <Iconify icon="eva:info-fill" width={16} /> Password must be minimum 6+
+              <Iconify icon="eva:info-fill" width={16} /> Şifre en az 6+ karakter olmalıdır
             </Box>
           }
         />
@@ -123,7 +116,7 @@ export function AccountChangePassword() {
         <Field.Text
           name="confirmNewPassword"
           type={showPassword.value ? 'text' : 'password'}
-          label="Confirm new password"
+          label="Yeni şifreyi onayla"
           slotProps={{
             input: {
               endAdornment: (
@@ -140,7 +133,7 @@ export function AccountChangePassword() {
         />
 
         <LoadingButton type="submit" variant="contained" loading={isSubmitting} sx={{ ml: 'auto' }}>
-          Save changes
+          Kaydet
         </LoadingButton>
       </Card>
     </Form>
