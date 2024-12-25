@@ -79,7 +79,7 @@ export const PhoneInput = forwardRef((props, ref) => {
         <CountryListPopover
           countries={countries}
           searchCountry={searchCountry}
-          countryCode={selectedCountry}
+          countryCode={'TR'}
           onClickCountry={handleClickCountry}
           onSearchCountry={handleSearchCountry}
           sx={{
@@ -103,7 +103,7 @@ export const PhoneInput = forwardRef((props, ref) => {
         hiddenLabel={!label}
         country={selectedCountry}
         inputComponent={CustomInput}
-        placeholder={placeholder ?? 'Enter phone number'}
+        placeholder={placeholder ?? 'Telefon numaranızı girin'}
         slotProps={{
           inputLabel: { shrink: true },
           input: {

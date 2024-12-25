@@ -33,6 +33,20 @@ export function OverviewAppView() {
     const jsonPayload = JSON.parse(atob(base64));
     console.log('UserID:', jsonPayload.userId);
     console.log('Roles:', jsonPayload.roles);
+    console.log('userName:', jsonPayload.userName);
+    console.log('firstName:', jsonPayload.firstName);
+    console.log('lastName:', jsonPayload.lastName);
+    console.log('mail:', jsonPayload.mail);
+    console.log('phone:', jsonPayload.phone);
+    console.log('title:', jsonPayload.title);
+    console.log('darkMode:', jsonPayload.darkMode);
+    console.log('contrast:', jsonPayload.contrast);
+    console.log('rightToLeft:', jsonPayload.rightToLeft);
+    console.log('compact:', jsonPayload.compact);
+    console.log('presets:', jsonPayload.presets);
+    console.log('layout:', jsonPayload.layout);
+    console.log('family:', jsonPayload.family);
+    console.log('size:', jsonPayload.size);
   });
   return (
     <DashboardContent maxWidth="xl">

@@ -1,11 +1,10 @@
-import { varAlpha } from 'minimal-shared/utils';
+import { useState, useEffect } from 'react';
 import { useBoolean } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar';
 import Drawer from '@mui/material/Drawer';
-import Tooltip from '@mui/material/Tooltip';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
@@ -28,6 +27,34 @@ import { SignOutButton } from './sign-out-button';
 // ----------------------------------------------------------------------
 
 export function AccountDrawer({ data = [], sx, ...other }) {
+  const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = JSON.parse(atob(base64));
+
+                const userData = {
+                    userId: jsonPayload.userId,
+                    userName: jsonPayload.userName,
+                    firstName: jsonPayload.firstName,
+                    lastName: jsonPayload.lastName,
+                    mail: jsonPayload.mail,
+                    phone: jsonPayload.phone,
+                    title: jsonPayload.title,
+                };
+
+                setUser(userData);
+            } catch (error) {
+                console.error('Token çözümleme hatası:', error);
+            }
+        } else {
+            console.warn('Token bulunamadı!');
+        }
+    }, []);
   const pathname = usePathname();
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
@@ -39,8 +66,8 @@ export function AccountDrawer({ data = [], sx, ...other }) {
         primaryBorder: { size: 120, sx: { color: 'primary.main' } },
       }}
     >
-      <Avatar src={'Said'} alt={'Said'} sx={{ width: 1, height: 1 }}>
-        {'Said'}
+      <Avatar src={user?.firstName} alt={user?.firstName} sx={{ width: 1, height: 1 }}>
+        {user?.firstName}
       </Avatar>
     </AnimateBorder>
   );
@@ -103,8 +130,8 @@ export function AccountDrawer({ data = [], sx, ...other }) {
     <>
       <AccountButton
         onClick={onOpen}
-        photoURL={'Said'}
-        displayName={'Said'}
+        photoURL={user?.firstName}
+        displayName={user?.firstName}
         sx={sx}
         {...other}
       />
@@ -139,8 +166,12 @@ export function AccountDrawer({ data = [], sx, ...other }) {
           >
             {renderAvatar()}
 
-            <Typography variant="subtitle1" noWrap sx={{ mt: 1, pb: 2 }}>
-              {'Said'}
+            <Typography variant="subtitle1" noWrap sx={{ mt: 1 }}>
+              {user?.firstName} {user?.lastName}
+            </Typography>
+
+            <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, pb: 2 }} noWrap>
+              {user?.mail}
             </Typography>
           </Box>
 

@@ -77,6 +77,7 @@ export function Searchbar({ data: navItems = [], sx, ...other }) {
         {
           display: 'flex',
           alignItems: 'center',
+          minWidth: 250,
           [theme.breakpoints.up(breakpoint)]: {
             pr: 1,
             borderRadius: 1.5,
@@ -116,6 +117,8 @@ export function Searchbar({ data: navItems = [], sx, ...other }) {
 
       <Label
         sx={{
+          flexGrow: 1,
+          textAlign: 'center',
           color: 'grey.800',
           cursor: 'inherit',
           bgcolor: 'common.white',

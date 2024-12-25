@@ -110,12 +110,6 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
           {/** @slot Searchbar */}
           <Searchbar data={navData} />
 
-          {/** @slot Language popover */}
-          <LanguagePopover data={allLangs} />
-
-          {/** @slot Notifications popover */}
-          <NotificationsDrawer data={_notifications} />
-
           {/** @slot Contacts popover */}
           <ContactsPopover data={_contacts} />
 
