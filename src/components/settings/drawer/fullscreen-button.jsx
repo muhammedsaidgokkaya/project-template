@@ -21,7 +21,7 @@ export function FullScreenButton() {
   }, []);
 
   return (
-    <Tooltip title={fullscreen ? 'Exit' : 'Full Screen'}>
+    <Tooltip title={fullscreen ? 'Çıkış' : 'Tam Ekran'}>
       <IconButton onClick={onToggleFullScreen} color={fullscreen ? 'primary' : 'default'}>
         <Iconify
           icon={

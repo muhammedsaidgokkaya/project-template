@@ -80,7 +80,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
           alignItems: { xs: 'flex-end', md: 'center' },
         }}
       >
-        <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+        {/* <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
           <InputLabel htmlFor="filter-role-select">Role</InputLabel>
           <Select
             multiple
@@ -102,7 +102,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
 
         <Box
           sx={{
@@ -117,7 +117,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             fullWidth
             value={currentFilters.name}
             onChange={handleFilterName}
-            placeholder="Search..."
+            placeholder="Ara..."
             slotProps={{
               input: {
                 startAdornment: (
@@ -129,13 +129,13 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             }}
           />
 
-          <IconButton onClick={menuActions.onOpen}>
+          {/* <IconButton onClick={menuActions.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          </IconButton> */}
         </Box>
       </Box>
 
-      {renderMenuActions()}
+      {/* {renderMenuActions()} */}
     </>
   );
 }

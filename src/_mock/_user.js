@@ -3,10 +3,8 @@ import { _mock } from './_mock';
 // ----------------------------------------------------------------------
 
 export const USER_STATUS_OPTIONS = [
-  { value: 'active', label: 'Active' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'banned', label: 'Banned' },
-  { value: 'rejected', label: 'Rejected' },
+  { value: 'Aktif', label: 'Aktif' },
+  { value: 'Pasif', label: 'Pasif' },
 ];
 
 export const _userAbout = {

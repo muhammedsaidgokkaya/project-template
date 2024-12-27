@@ -75,7 +75,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
         </IconButton>
       </Tooltip> */}
 
-      <Tooltip title="Close">
+      <Tooltip title="Kapat">
         <IconButton onClick={settings.onCloseDrawer}>
           <Iconify icon="mingcute:close-line" />
         </IconButton>
@@ -85,7 +85,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
 
   const renderMode = () => (
     <BaseOption
-      label="Dark mode"
+      label="Koyu Mod"
       icon="moon"
       selected={settings.state.colorScheme === 'dark'}
       onChangeOption={() => {
@@ -97,7 +97,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
 
   const renderContrast = () => (
     <BaseOption
-      label="Contrast"
+      label="Kontrast"
       icon="contrast"
       selected={settings.state.contrast === 'hight'}
       onChangeOption={() =>
@@ -110,7 +110,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
 
   const renderRtl = () => (
     <BaseOption
-      label="Right to left"
+      label="Sağdan Sola"
       icon="align-right"
       selected={settings.state.direction === 'rtl'}
       onChangeOption={() =>
@@ -123,8 +123,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
 
   const renderCompact = () => (
     <BaseOption
-      tooltip="Dashboard only and available at large resolutions > 1600px (xl)"
-      label="Compact"
+      label="Genişlik"
       icon="autofit-width"
       selected={!!settings.state.compactLayout}
       onChangeOption={() => settings.setState({ compactLayout: !settings.state.compactLayout })}
@@ -133,9 +132,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
 
   const renderPresets = () => (
     <LargeBlock
-      title="Presets"
-      canReset={settings.state.primaryColor !== defaultSettings.primaryColor}
-      onReset={() => settings.setState({ primaryColor: defaultSettings.primaryColor })}
+      title="Renk"
     >
       <PresetsOptions
         options={Object.keys(primaryColorPresets).map((key) => ({
@@ -149,43 +146,22 @@ export function SettingsDrawer({ sx, defaultSettings }) {
   );
 
   const renderNav = () => (
-    <LargeBlock title="Nav" tooltip="Dashboard only" sx={{ gap: 2.5 }}>
+    <LargeBlock title="Düzen" sx={{ gap: 2.5 }}>
       {isNavLayoutVisible && (
-        <SmallBlock
-          label="Layout"
-          canReset={settings.state.navLayout !== defaultSettings.navLayout}
-          onReset={() => settings.setState({ navLayout: defaultSettings.navLayout })}
-        >
           <NavLayoutOptions
             options={['vertical', 'horizontal', 'mini']}
             value={settings.state.navLayout}
             onChangeOption={(newOption) => settings.setState({ navLayout: newOption })}
           />
-        </SmallBlock>
       )}
-      {/* {isNavColorVisible && (
-        <SmallBlock
-          label="Color"
-          canReset={settings.state.navColor !== defaultSettings.navColor}
-          onReset={() => settings.setState({ navColor: defaultSettings.navColor })}
-        >
-          <NavColorOptions
-            options={['integrate', 'apparent']}
-            value={settings.state.navColor}
-            onChangeOption={(newOption) => settings.setState({ navColor: newOption })}
-          />
-        </SmallBlock>
-      )} */}
     </LargeBlock>
   );
 
   const renderFont = () => (
-    <LargeBlock title="Font" sx={{ gap: 2.5 }}>
+    <LargeBlock title="Yazı Tipi" sx={{ gap: 2.5 }}>
       {isFontFamilyVisible && (
         <SmallBlock
-          label="Family"
-          canReset={settings.state.fontFamily !== defaultSettings.fontFamily}
-          onReset={() => settings.setState({ fontFamily: defaultSettings.fontFamily })}
+          label="Aile"
         >
           <FontFamilyOptions
             options={[
@@ -201,9 +177,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
       )}
       {isFontSizeVisible && (
         <SmallBlock
-          label="Size"
-          canReset={settings.state.fontSize !== defaultSettings.fontSize}
-          onReset={() => settings.setState({ fontSize: defaultSettings.fontSize })}
+          label="Boyut"
           sx={{ gap: 5 }}
         >
           <FontSizeOptions

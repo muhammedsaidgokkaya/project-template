@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useBoolean } from 'minimal-shared/hooks';
 
+import { CONFIG } from 'src/global-config';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar';
@@ -29,32 +31,30 @@ import { SignOutButton } from './sign-out-button';
 export function AccountDrawer({ data = [], sx, ...other }) {
   const [user, setUser] = useState(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem('jwtToken');
-        if (token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = JSON.parse(atob(base64));
-
-                const userData = {
-                    userId: jsonPayload.userId,
-                    userName: jsonPayload.userName,
-                    firstName: jsonPayload.firstName,
-                    lastName: jsonPayload.lastName,
-                    mail: jsonPayload.mail,
-                    phone: jsonPayload.phone,
-                    title: jsonPayload.title,
-                };
-
-                setUser(userData);
-            } catch (error) {
-                console.error('Token çözümleme hatası:', error);
-            }
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`${CONFIG.apiUrl}/Organization/drawer`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data);
         } else {
-            console.warn('Token bulunamadı!');
+          console.error('API hatası:', response.status);
         }
-    }, []);
+      } catch (error) {
+        console.error('Veri çekme hatası:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
   const pathname = usePathname();
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();

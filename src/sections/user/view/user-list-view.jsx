@@ -1,6 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { varAlpha } from 'minimal-shared/utils';
 import { useBoolean, useSetState } from 'minimal-shared/hooks';
+
+import { CONFIG } from 'src/global-config';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -16,7 +18,7 @@ import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+import { _userList, USER_STATUS_OPTIONS } from 'src/_mock';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -42,14 +44,14 @@ import { UserTableFiltersResult } from '../user-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
+const STATUS_OPTIONS = [{ value: 'all', label: 'Hepsi' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
-  { id: 'role', label: 'Role', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
+  { id: 'name', label: 'Ad Soyad', width: 220 },
+  { id: 'phone', label: 'Telefon', width: 200 },
+  { id: 'title', label: 'Pozisyon', width: 180 },
+  { id: 'dateOfBirth', label: 'Doğum Tarihi', width: 200 },
+  { id: 'isActive', label: 'Durum', width: 100 },
   { id: '', width: 88 },
 ];
 
@@ -57,33 +59,58 @@ const TABLE_HEAD = [
 
 export function UserListView() {
   const table = useTable();
-
   const confirmDialog = useBoolean();
+  
+  // API'den alınan veriyi depolamak için state
+  const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(false);  // Loading durumu için state
 
-  const [tableData, setTableData] = useState(_userList);
-
-  const filters = useSetState({ name: '', role: [], status: 'all' });
+  const filters = useSetState({ name: '', isActive: 'all' });
   const { state: currentFilters, setState: updateFilters } = filters;
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);  // Yükleniyor durumunu başlat
+        const token = localStorage.getItem('jwtToken');
+        const response = await fetch(`${CONFIG.apiUrl}/Organization/users`, {
+          method: 'GET',  // Eğer GET istek yapıyorsanız bu kısmı belirtmek isteyebilirsiniz
+          headers: {
+            'Authorization': `Bearer ${token}`,  // Bearer token'ı başlığa ekle
+            'Content-Type': 'application/json',  // İçeriğin JSON formatında olduğunu belirt
+          }
+        });
+        const data = await response.json();
+        setTableData(data);  // Veriyi tableData state'ine al
+      } catch (error) {
+        console.error('Veri çekerken hata:', error);
+      } finally {
+        setLoading(false);  // Yükleniyor durumunu bitir
+      }
+    };
+
+    fetchData();
+  }, []); // Bu effect sadece bir kez çalışacak, component mount edildiğinde
+
+  // Filtreleme işlemi
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters: currentFilters,
   });
-
   const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
 
   const canReset =
-    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
+    !!currentFilters.name || currentFilters.isActive !== 'all';
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
+  // Satır silme işlemi
   const handleDeleteRow = useCallback(
     (id) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
 
-      toast.success('Delete success!');
-
+      toast.success('Silme işlemi başarılı!');
       setTableData(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
@@ -94,17 +121,17 @@ export function UserListView() {
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
-    toast.success('Delete success!');
-
+    toast.success('Silme işlemi başarılı!');
     setTableData(deleteRows);
 
     table.onUpdatePageDeleteRows(dataInPage.length, dataFiltered.length);
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
+  // Durum filtresi değişimi
   const handleFilterStatus = useCallback(
     (event, newValue) => {
       table.onResetPage();
-      updateFilters({ status: newValue });
+      updateFilters({ isActive: newValue });
     },
     [updateFilters, table]
   );
@@ -113,10 +140,10 @@ export function UserListView() {
     <ConfirmDialog
       open={confirmDialog.value}
       onClose={confirmDialog.onFalse}
-      title="Delete"
+      title="Sil"
       content={
         <>
-          Are you sure want to delete <strong> {table.selected.length} </strong> items?
+          <strong> {table.selected.length} </strong> öğeyi silmek istediğinizden emin misiniz?
         </>
       }
       action={
@@ -128,7 +155,7 @@ export function UserListView() {
             confirmDialog.onFalse();
           }}
         >
-          Delete
+          Sil
         </Button>
       }
     />
@@ -138,11 +165,11 @@ export function UserListView() {
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="List"
+          heading="Kullanıcı Listesi"
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'User', href: paths.dashboard.user.root },
-            { name: 'List' },
+            { name: 'Başlangıç', href: paths.dashboard.root },
+            { name: 'Organizasyon' },
+            { name: 'Kullanıcı Listesi' },
           ]}
           action={
             <Button
@@ -151,7 +178,7 @@ export function UserListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New user
+              Yeni Kullanıcı
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -159,7 +186,7 @@ export function UserListView() {
 
         <Card>
           <Tabs
-            value={currentFilters.status}
+            value={currentFilters.isActive}
             onChange={handleFilterStatus}
             sx={[
               (theme) => ({
@@ -177,18 +204,17 @@ export function UserListView() {
                 icon={
                   <Label
                     variant={
-                      ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
+                      ((tab.value === 'all' || tab.value === currentFilters.isActive) && 'filled') ||
                       'soft'
                     }
                     color={
-                      (tab.value === 'active' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'banned' && 'error') ||
+                      (tab.value === 'Aktif' && 'success') ||
+                      (tab.value === 'Pasif' && 'error') ||
                       'default'
                     }
                   >
-                    {['active', 'pending', 'banned', 'rejected'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
+                    {['Aktif', 'Pasif'].includes(tab.value)
+                      ? tableData.filter((user) => user.isActive === tab.value).length
                       : tableData.length}
                   </Label>
                 }
@@ -199,7 +225,6 @@ export function UserListView() {
           <UserTableToolbar
             filters={filters}
             onResetPage={table.onResetPage}
-            options={{ roles: _roles }}
           />
 
           {canReset && (
@@ -223,7 +248,7 @@ export function UserListView() {
                 )
               }
               action={
-                <Tooltip title="Delete">
+                <Tooltip title="Sil">
                   <IconButton color="primary" onClick={confirmDialog.onTrue}>
                     <Iconify icon="solar:trash-bin-trash-bold" />
                   </IconButton>
@@ -296,7 +321,7 @@ export function UserListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters }) {
-  const { name, status, role } = filters;
+  const { name, isActive } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -312,12 +337,8 @@ function applyFilter({ inputData, comparator, filters }) {
     inputData = inputData.filter((user) => user.name.toLowerCase().includes(name.toLowerCase()));
   }
 
-  if (status !== 'all') {
-    inputData = inputData.filter((user) => user.status === status);
-  }
-
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
+  if (isActive !== 'all') {
+    inputData = inputData.filter((user) => user.isActive === isActive);
   }
 
   return inputData;

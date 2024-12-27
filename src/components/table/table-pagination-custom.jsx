@@ -16,6 +16,8 @@ export function TablePaginationCustom({
     <Box sx={[{ position: 'relative' }, ...(Array.isArray(sx) ? sx : [sx])]}>
       <TablePagination
         rowsPerPageOptions={rowsPerPageOptions}
+        labelRowsPerPage="Sayfa başına satır sayısı:"
+        labelDisplayedRows={({ from, to, count }) => `${from}-${to} / ${count}`}
         component="div"
         {...other}
         sx={{ borderTopColor: 'transparent' }}
@@ -23,7 +25,7 @@ export function TablePaginationCustom({
 
       {onChangeDense && (
         <FormControlLabel
-          label="Dense"
+          label="Tablo Yoğunluğu"
           control={
             <Switch checked={dense} onChange={onChangeDense} inputProps={{ id: 'dense-switch' }} />
           }
