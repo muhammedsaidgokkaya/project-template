@@ -31,8 +31,6 @@ export const PhoneInput = forwardRef((props, ref) => {
 
   const defaultCountryCode = getCountryCode(value, inputCountryCode);
 
-  console.log(defaultCountryCode);
-
   const [searchCountry, setSearchCountry] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('TR');
 
