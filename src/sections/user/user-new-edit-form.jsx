@@ -170,7 +170,7 @@ export function UserNewEditForm() {
             console.log(errorResponse);
             throw new Error("Bir hata oluştu!");
           }
-          toast.success("Kullanıcı başarıyla Eklendi!");
+          toast.success("Kullanıcı başarıyla eklendi!");
           window.location.href = '/dashboard/user/list';
         } catch (error) {
           toast.error("Kullanıcı eklenemedi!");
@@ -247,7 +247,7 @@ export function UserNewEditForm() {
                   label="Cinsiyet"
                   options={[
                     { value: 'E', label: 'Erkek' },
-                    { value: 'K', label: 'Kız' },
+                    { value: 'K', label: 'Kadın' },
                   ]}
                 />
               </Box>

@@ -4,25 +4,26 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserNewEditForm } from '../user-new-edit-form';
+import { UserEditForm } from '../user-edit-form';
 
 // ----------------------------------------------------------------------
 
-export function UserEditView({ user: currentUser }) {
+export function UserEditView({ user: currentUser, userId }) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Edit"
+        heading="Kullanıcı Düzenle"
         backHref={paths.dashboard.user.list}
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
-          { name: currentUser?.name },
+          { name: 'Başlagıç', href: paths.dashboard.root },
+          { name: 'Organizasyon' },
+          { name: 'Kullanıcı Listesi', href: paths.dashboard.user.list },
+          { name: currentUser?.firstName + ' ' + currentUser?.lastName },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserNewEditForm currentUser={currentUser} />
+      <UserEditForm currentUser={currentUser} userId={userId} />
     </DashboardContent>
   );
 }

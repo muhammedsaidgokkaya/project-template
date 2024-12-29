@@ -122,7 +122,7 @@ export function AccountGeneral() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const token = localStorage.getItem("jwtToken");
-      const response = await fetch(`${CONFIG.apiUrl}/Organization/update-user`, {
+      const response = await fetch(`${CONFIG.apiUrl}/Organization/update-admin-user`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -234,7 +234,7 @@ export function AccountGeneral() {
                   label="Cinsiyet"
                   options={[
                     { value: 'E', label: 'Erkek' },
-                    { value: 'K', label: 'Kız' },
+                    { value: 'K', label: 'Kadın' },
                   ]}
                 />
               </Box>
