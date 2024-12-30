@@ -30,18 +30,11 @@ const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/detail
 const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
 const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
 // User
-const UserProfilePage = lazy(() => import('src/pages/dashboard/user/profile'));
-const UserCardsPage = lazy(() => import('src/pages/dashboard/user/cards'));
 const UserListPage = lazy(() => import('src/pages/dashboard/user/list'));
 const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
 const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
 // Account
 const AccountGeneralPage = lazy(() => import('src/pages/dashboard/user/account/general'));
-const AccountBillingPage = lazy(() => import('src/pages/dashboard/user/account/billing'));
-const AccountSocialsPage = lazy(() => import('src/pages/dashboard/user/account/socials'));
-const AccountNotificationsPage = lazy(
-  () => import('src/pages/dashboard/user/account/notifications')
-);
 const AccountChangePasswordPage = lazy(
   () => import('src/pages/dashboard/user/account/change-password')
 );
@@ -106,9 +99,7 @@ export const dashboardRoutes = [
       {
         path: 'user',
         children: [
-          { index: true, element: <UserProfilePage /> },
-          { path: 'profile', element: <UserProfilePage /> },
-          { path: 'cards', element: <UserCardsPage /> },
+          { index: true, element: <UserListPage /> },
           { path: 'list', element: <UserListPage /> },
           { path: 'new', element: <UserCreatePage /> },
           { path: ':id/edit', element: <UserEditPage /> },
@@ -117,9 +108,6 @@ export const dashboardRoutes = [
             element: accountLayout(),
             children: [
               { index: true, element: <AccountGeneralPage /> },
-              { path: 'billing', element: <AccountBillingPage /> },
-              { path: 'notifications', element: <AccountNotificationsPage /> },
-              { path: 'socials', element: <AccountSocialsPage /> },
               { path: 'change-password', element: <AccountChangePasswordPage /> },
             ],
           },

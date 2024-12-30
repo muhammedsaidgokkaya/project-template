@@ -6,7 +6,7 @@ import { View500 } from 'src/sections/error';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `500 Internal server error! | Error - ${CONFIG.appName}` };
+const metadata = { title: `Dahili sunucu hatası! - ${CONFIG.appName}` };
 
 export default function Page() {
   return (

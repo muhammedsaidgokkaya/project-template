@@ -6,7 +6,7 @@ import { NotFoundView } from 'src/sections/error';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `404 page not found! | Error - ${CONFIG.appName}` };
+const metadata = { title: `Sayfa bulunamadı! - ${CONFIG.appName}` };
 
 export default function Page() {
   return (

@@ -23,13 +23,13 @@ export function View500() {
       <Container component={MotionContainer}>
         <m.div variants={varBounce('in')}>
           <Typography variant="h3" sx={{ mb: 2 }}>
-            500 Internal server error
+              500 Dahili sunucu hatası
           </Typography>
         </m.div>
 
         <m.div variants={varBounce('in')}>
           <Typography sx={{ color: 'text.secondary' }}>
-            There was an error, please try again later.
+            Bir hata oluştu, lütfen daha sonra tekrar deneyin.
           </Typography>
         </m.div>
 
@@ -38,7 +38,7 @@ export function View500() {
         </m.div>
 
         <Button component={RouterLink} href="/" size="large" variant="contained">
-          Go to home
+          Ana sayfaya git
         </Button>
       </Container>
     </SimpleLayout>
