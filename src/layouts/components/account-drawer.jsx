@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useBoolean } from 'minimal-shared/hooks';
 
 import { CONFIG } from 'src/global-config';
+import { jwtDecode } from 'jwt-decode';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -31,6 +32,20 @@ import { SignOutButton } from './sign-out-button';
 export function AccountDrawer({ data = [], sx, ...other }) {
   const [user, setUser] = useState(null);
 
+  const token = localStorage.getItem('jwtToken');
+  const decoded = jwtDecode(token);
+  const userId = decoded.userId;
+
+  const imageSrc = [
+    `/user/${userId}.png`,
+    `/user/${userId}.jpg`,
+    `/user/${userId}.jpeg`
+  ].find((src) => {
+    const img = new Image();
+    img.src = src;
+    return img.complete;
+  }) || user?.firstName;
+  
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
     const fetchUserData = async () => {
@@ -66,8 +81,8 @@ export function AccountDrawer({ data = [], sx, ...other }) {
         primaryBorder: { size: 120, sx: { color: 'primary.main' } },
       }}
     >
-      <Avatar src={user?.firstName} alt={user?.firstName} sx={{ width: 1, height: 1 }}>
-        {user?.firstName}
+      <Avatar src={imageSrc} alt={imageSrc} sx={{ width: 1, height: 1 }}>
+        {imageSrc}
       </Avatar>
     </AnimateBorder>
   );

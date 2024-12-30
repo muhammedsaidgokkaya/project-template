@@ -15,9 +15,23 @@ const metadata = { title: `Kullanıcı Düzenle - ${CONFIG.appName}` };
 export default function Page() {
   const { id = '' } = useParams();
   const [currentUser, setCurrentUser] = useState(null);
-
+  const fetchImage = (src) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => resolve(src);
+      img.onerror = () => resolve('');
+    });
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
+      const imageSrc = await Promise.any([
+        fetchImage(`/user/${id}.png`),
+        fetchImage(`/user/${id}.jpg`),
+        fetchImage(`/user/${id}.jpeg`)
+      ]);
+  
       const token = localStorage.getItem('jwtToken');
       try {
         const response = await fetch(`${CONFIG.apiUrl}/Organization/user?userId=${id}`, {
@@ -27,18 +41,21 @@ export default function Page() {
             'Content-Type': 'application/json',
           },
         });
-
+  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-
+  
         const data = await response.json();
-        setCurrentUser(data);
+        setCurrentUser({
+          ...data,
+          photoURL: imageSrc,
+        });
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
-    
+  
     fetchData();
   }, [id]);
 

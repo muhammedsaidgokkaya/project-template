@@ -52,6 +52,7 @@ const TABLE_HEAD = [
   { id: 'title', label: 'Pozisyon', width: 180 },
   { id: 'dateOfBirth', label: 'Doğum Tarihi', width: 200 },
   { id: 'isActive', label: 'Durum', width: 100 },
+  { id: '', width: 100 },
   { id: '', width: 88 },
 ];
 
@@ -71,28 +72,27 @@ export function UserListView() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);  // Yükleniyor durumunu başlat
+        setLoading(true);
         const token = localStorage.getItem('jwtToken');
         const response = await fetch(`${CONFIG.apiUrl}/Organization/users`, {
-          method: 'GET',  // Eğer GET istek yapıyorsanız bu kısmı belirtmek isteyebilirsiniz
+          method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,  // Bearer token'ı başlığa ekle
-            'Content-Type': 'application/json',  // İçeriğin JSON formatında olduğunu belirt
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
           }
         });
         const data = await response.json();
-        setTableData(data);  // Veriyi tableData state'ine al
+        setTableData(data);
       } catch (error) {
         console.error('Veri çekerken hata:', error);
       } finally {
-        setLoading(false);  // Yükleniyor durumunu bitir
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Bu effect sadece bir kez çalışacak, component mount edildiğinde
+  }, []);
 
-  // Filtreleme işlemi
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
@@ -105,29 +105,82 @@ export function UserListView() {
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  // Satır silme işlemi
   const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-
-      toast.success('Silme işlemi başarılı!');
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
+    async (id) => {
+      try {
+        const deleteRow = tableData.filter((row) => row.id !== id);
+        setTableData(deleteRow);
+        table.onUpdatePageDeleteRow(dataInPage.length);
+  
+        const token = localStorage.getItem("jwtToken");
+        const response = await fetch(`${CONFIG.apiUrl}/Organization/delete-user?userId=${id}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+  
+        if (!response.ok) {
+          let errorResponse = { message: "Sunucudan beklenmeyen bir hata döndü." };
+          try {
+            errorResponse = await response.json();
+          } catch (parseError) {
+            console.error("Error parsing response:", parseError);
+          }
+          throw new Error(errorResponse.message || "Bir hata oluştu!");
+        }
+  
+        toast.success('Silme işlemi başarılı!');
+      } catch (error) {
+        toast.error(error.message || "Silme işlemi başarısız!");
+      }
     },
     [dataInPage.length, table, tableData]
   );
 
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-
-    toast.success('Silme işlemi başarılı!');
-    setTableData(deleteRows);
-
-    table.onUpdatePageDeleteRows(dataInPage.length, dataFiltered.length);
+  const handleDeleteRows = useCallback(async () => {
+    try {
+      const selectedUserIds = table.selected;
+  
+      if (selectedUserIds.length === 0) {
+        toast.error('Silinecek kullanıcı seçilmedi!');
+        return;
+      }
+      
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Organization/delete-users`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: selectedUserIds })
+      });
+  
+      if (!response.ok) {
+        let errorResponse = { message: "Sunucudan beklenmeyen bir hata döndü." };
+  
+        try {
+          errorResponse = await response.json();
+        } catch (parseError) {
+          console.error("Error parsing response:", parseError);
+        }
+  
+        throw new Error(errorResponse.message || "Bir hata oluştu!");
+      }
+  
+      const deleteRows = tableData.filter((row) => !selectedUserIds.includes(row.id));
+      setTableData(deleteRows);
+      
+      table.onUpdatePageDeleteRows(dataInPage.length, dataFiltered.length);
+  
+      toast.success('Silme işlemi başarılı!');
+    } catch (error) {
+      toast.error(error.message || "Silme işlemi başarısız!");
+    }
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
-  // Durum filtresi değişimi
   const handleFilterStatus = useCallback(
     (event, newValue) => {
       table.onResetPage();

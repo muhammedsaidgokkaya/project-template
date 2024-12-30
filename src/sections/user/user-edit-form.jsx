@@ -64,6 +64,7 @@ export const NewUserSchema = zod.object({
 export function UserEditForm({ currentUser, userId }) {
   const router = useRouter();
   const [roles, setRoles] = useState([]);
+
   const defaultValues = {
     photoURL: '',
     firstName: '',
@@ -139,7 +140,17 @@ export function UserEditForm({ currentUser, userId }) {
         })
       });
 
-      console.log(userId);
+      const photo = methods.getValues('photoURL');
+      const formData = new FormData();
+      formData.append("photo", photo);
+      formData.append("userId", userId);  
+      const responsePhoto = await fetch(`${CONFIG.apiUrl}/Organization/update-photo`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
       if (!response.ok) {
         let errorResponse = null;
@@ -166,6 +177,11 @@ export function UserEditForm({ currentUser, userId }) {
             <Box sx={{ mb: 5 }}>
               <Field.UploadAvatar
                 name="photoURL"
+                onChange={(event) => {
+                  const file = event.target.files[0];
+                  methods.setValue('photoURL', [file]);
+                  
+                }}
                 maxSize={3145728}
                 helperText={
                   <Typography

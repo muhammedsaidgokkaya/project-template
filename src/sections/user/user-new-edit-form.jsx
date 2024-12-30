@@ -141,40 +141,56 @@ export function UserNewEditForm() {
 
   const onSubmit = handleSubmit( async (data) => {
     try {
-          const token = localStorage.getItem("jwtToken");
-          const response = await fetch(`${CONFIG.apiUrl}/Organization/add-user`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              firstName: data.firstName,
-              lastName: data.lastName,
-              mail: data.mail,
-              phone: data.phone,
-              title: data.title,
-              dateOfBirth: data.dateOfBirth,
-              address: data.address,
-              gender: data.gender,
-              roles: data.roles,
-            })
-          });
-          if (!response.ok) {
-            let errorResponse = null;
-            try {
-              errorResponse = await response.json();
-            } catch (parseError) {
-              errorResponse = { message: "Sunucudan beklenmeyen bir hata döndü." };
-            }
-            console.log(errorResponse);
-            throw new Error("Bir hata oluştu!");
+        const token = localStorage.getItem("jwtToken");
+
+        const response = await fetch(`${CONFIG.apiUrl}/Organization/add-user`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            mail: data.mail,
+            phone: data.phone,
+            title: data.title,
+            dateOfBirth: data.dateOfBirth,
+            address: data.address,
+            gender: data.gender,
+            roles: data.roles,
+          })
+        });
+
+        const user = await response.json();
+        const userId = user.id;
+        const photo = methods.getValues('photoURL');
+        const formData = new FormData();
+        formData.append("photo", photo);
+        formData.append("userId", userId);  
+        const responsePhoto = await fetch(`${CONFIG.apiUrl}/Organization/add-photo`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!response.ok) {
+          let errorResponse = null;
+          try {
+            errorResponse = await response.json();
+          } catch (parseError) {
+            errorResponse = { message: "Sunucudan beklenmeyen bir hata döndü." };
           }
-          toast.success("Kullanıcı başarıyla eklendi!");
-          window.location.href = '/dashboard/user/list';
-        } catch (error) {
-          toast.error("Kullanıcı eklenemedi!");
+          console.log(errorResponse);
+          throw new Error("Bir hata oluştu!");
         }
+        toast.success("Kullanıcı başarıyla eklendi!");
+        window.location.href = '/dashboard/user/list';
+      } catch (error) {
+        toast.error("Kullanıcı eklenemedi!");
+      }
   });
 
   return (
@@ -192,6 +208,11 @@ export function UserNewEditForm() {
               <Box sx={{ mb: 5 }}>
                 <Field.UploadAvatar
                   name="photoURL"
+                  onChange={(event) => {
+                    const file = event.target.files[0];
+                    methods.setValue('photoURL', [file]);
+                    
+                  }}
                   maxSize={3145728}
                   helperText={
                     <Typography
@@ -205,7 +226,7 @@ export function UserNewEditForm() {
                       }}
                     >
                       İzin verilen maksimum *.jpeg, *.jpg,
-                      <br /> *.png, *.gif boyutu: {fData(3145728)}
+                      <br /> *.png boyutu: {fData(3145728)}
                     </Typography>
                   }
                 />

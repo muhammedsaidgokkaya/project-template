@@ -80,11 +80,29 @@ export function AccountGeneral() {
     gender: '',
   };
 
-  // Fetch user data when the component mounts
+  const fetchImage = (src) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => resolve(src);
+      img.onerror = () => resolve('');
+    });
+  };
+  const token = localStorage.getItem("jwtToken");
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split('')
+      .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
+  );
+  const payload = JSON.parse(jsonPayload);
+  const userId = payload.userId;
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('jwtToken');
         const response = await fetch(`${CONFIG.apiUrl}/Organization/user`, {
           method: 'GET',
           headers: {
@@ -98,7 +116,16 @@ export function AccountGeneral() {
         }
 
         const userData = await response.json();
-        setCurrentUser(userData);
+        const imageSrc = await Promise.any([
+          fetchImage(`/user/${userId}.png`),
+          fetchImage(`/user/${userId}.jpg`),
+          fetchImage(`/user/${userId}.jpeg`)
+        ]);
+
+        setCurrentUser({
+          ...userData,
+          photoURL: imageSrc,
+        });
       } catch (error) {
         toast.error('Veri alınırken bir hata oluştu');
       }
@@ -121,7 +148,6 @@ export function AccountGeneral() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const token = localStorage.getItem("jwtToken");
       const response = await fetch(`${CONFIG.apiUrl}/Organization/update-admin-user`, {
         method: "POST",
         headers: {
@@ -143,6 +169,19 @@ export function AccountGeneral() {
           gender: data.gender
         })
       });
+
+      const photo = methods.getValues('photoURL');
+      const formData = new FormData();
+      formData.append("photo", photo);
+      formData.append("userId", userId);  
+      const responsePhoto = await fetch(`${CONFIG.apiUrl}/Organization/update-photo`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
       if (!response.ok) {
         let errorResponse = null;
         try {
@@ -192,6 +231,11 @@ export function AccountGeneral() {
             >
               <Field.UploadAvatar
                 name="photoURL"
+                onChange={(event) => {
+                  const file = event.target.files[0];
+                  methods.setValue('photoURL', [file]);
+                  
+                }}
                 maxSize={3145728}
                 helperText={
                   <Typography
