@@ -177,6 +177,7 @@ export function UserEditForm({ currentUser, userId }) {
             <Box sx={{ mb: 5 }}>
               <Field.UploadAvatar
                 name="photoURL"
+                value={methods.watch('photoURL')}
                 onChange={(event) => {
                   const file = event.target.files[0];
                   methods.setValue('photoURL', [file]);

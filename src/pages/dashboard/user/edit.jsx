@@ -19,34 +19,47 @@ export default function Page() {
     return new Promise((resolve) => {
       const img = new Image();
       img.src = src;
-      img.onload = () => resolve(src);
-      img.onerror = () => resolve('');
+      const timeout = setTimeout(() => resolve(''), 3000); // 3 saniye timeout
+      img.onload = () => {
+        clearTimeout(timeout);
+        resolve(src);
+      };
+      img.onerror = () => {
+        clearTimeout(timeout);
+        resolve('');
+      };
     });
+  };
+  
+  const fetchImageSources = async (id) => {
+    const sources = [`/user/${id}.png`, `/user/${id}.jpg`, `/user/${id}.jpeg`];
+    const results = await Promise.allSettled(sources.map(fetchImage));
+  
+    // Başarılı olan ilk sonucu döndür
+    const validImage = results.find((result) => result.status === 'fulfilled' && result.value);
+    return validImage ? validImage.value : ''; // Eğer hiçbir resim yoksa boş döner
   };
   
   useEffect(() => {
     const fetchData = async () => {
-      const imageSrc = await Promise.any([
-        fetchImage(`/user/${id}.png`),
-        fetchImage(`/user/${id}.jpg`),
-        fetchImage(`/user/${id}.jpeg`)
-      ]);
-  
       const token = localStorage.getItem('jwtToken');
       try {
-        const response = await fetch(`${CONFIG.apiUrl}/Organization/user?userId=${id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        const [imageSrc, userResponse] = await Promise.all([
+          fetchImageSources(id), // Resim yüklemeleri
+          fetch(`${CONFIG.apiUrl}/Organization/user?userId=${id}`, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }), // Kullanıcı bilgisi
+        ]);
   
-        if (!response.ok) {
+        if (!userResponse.ok) {
           throw new Error('Network response was not ok');
         }
   
-        const data = await response.json();
+        const data = await userResponse.json();
         setCurrentUser({
           ...data,
           photoURL: imageSrc,

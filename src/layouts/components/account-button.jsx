@@ -26,7 +26,7 @@ export function AccountButton({ photoURL, displayName, sx, ...other }) {
     const img = new Image();
     img.src = src;
     return img.complete;
-  }) || user?.firstName;
+  }) || user?.firstName?.charAt(0)?.toUpperCase();
   
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');

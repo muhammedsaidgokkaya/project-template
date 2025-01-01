@@ -116,6 +116,7 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
 
       const statusMessage = updatedStatus === 'Aktif' ? 'aktif' : 'pasif';
       toast.success('Kullanıcı ' + statusMessage + ' hale getirildi!');
+      window.location.reload();
     } catch (error) {
       toast.error(error.message || "Silme işlemi başarısız!");
     }
