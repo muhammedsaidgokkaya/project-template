@@ -18,7 +18,7 @@ export function useChart(updatedOptions) {
 const baseChartOptions = (theme) => {
   const LABEL_TOTAL = {
     show: true,
-    label: 'Total',
+    label: 'Toplam',
     color: theme.vars.palette.text.secondary,
     fontSize: theme.typography.subtitle2.fontSize,
     fontWeight: theme.typography.subtitle2.fontWeight,

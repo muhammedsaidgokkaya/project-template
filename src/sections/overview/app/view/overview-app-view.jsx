@@ -148,7 +148,7 @@ export function OverviewAppView() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, lg: 8 }}>
+        <Grid size={{ xs: 12, lg: 12 }}>
           <AppNewInvoice
             title="New invoice"
             tableData={_appInvoices}

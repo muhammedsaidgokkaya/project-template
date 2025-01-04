@@ -20,6 +20,7 @@ import { EcommerceSalesOverview } from '../ecommerce-sales-overview';
 import { EcommerceWidgetSummary } from '../ecommerce-widget-summary';
 import { EcommerceLatestProducts } from '../ecommerce-latest-products';
 import { EcommerceCurrentBalance } from '../ecommerce-current-balance';
+// import { MetaChartPd } from '../meta-chart-pd';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +30,7 @@ export function OverviewEcommerceView() {
   return (
     <DashboardContent maxWidth="xl">
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 8 }}>
+        {/* <Grid size={{ xs: 12, md: 8 }}>
           <EcommerceWelcome
             title={`Congratulations 🎉  \n ${'Said'}`}
             description="Best seller of the month you have done 57.6% more sales today."
@@ -44,11 +45,11 @@ export function OverviewEcommerceView() {
 
         <Grid size={{ xs: 12, md: 4 }}>
           <EcommerceNewProducts list={_ecommerceNewProducts} />
-        </Grid>
+        </Grid> */}
 
         <Grid size={{ xs: 12, md: 4 }}>
           <EcommerceWidgetSummary
-            title="Product sold"
+            title="Harcanan Tutar (TL)"
             percent={2.6}
             total={765}
             chart={{
@@ -60,7 +61,7 @@ export function OverviewEcommerceView() {
 
         <Grid size={{ xs: 12, md: 4 }}>
           <EcommerceWidgetSummary
-            title="Total balance"
+            title="Sıklık"
             percent={-0.1}
             total={18765}
             chart={{
@@ -73,7 +74,7 @@ export function OverviewEcommerceView() {
 
         <Grid size={{ xs: 12, md: 4 }}>
           <EcommerceWidgetSummary
-            title="Sales profit"
+            title="Tıklama"
             percent={0.6}
             total={4876}
             chart={{
@@ -84,19 +85,19 @@ export function OverviewEcommerceView() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <EcommerceSaleByGender
-            title="Sale by gender"
-            total={2324}
+        {/* <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <MetaChartPd
+            title="Current visits"
             chart={{
               series: [
-                { label: 'Mens', value: 25 },
-                { label: 'Womens', value: 50 },
-                { label: 'Kids', value: 75 },
+                { label: 'America', value: 3500 },
+                { label: 'Asia', value: 2500 },
+                { label: 'Europe', value: 1500 },
+                { label: 'Africa', value: 500 },
               ],
             }}
           />
-        </Grid>
+        </Grid> */}
 
         <Grid size={{ xs: 12, md: 6, lg: 8 }}>
           <EcommerceYearlySales
@@ -149,7 +150,7 @@ export function OverviewEcommerceView() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, lg: 8 }}>
+        {/* <Grid size={{ xs: 12, md: 6, lg: 8 }}>
           <EcommerceSalesOverview title="Sales overview" data={_ecommerceSalesOverview} />
         </Grid>
 
@@ -175,11 +176,11 @@ export function OverviewEcommerceView() {
               { id: 'rank', label: 'Rank', align: 'right' },
             ]}
           />
-        </Grid>
+        </Grid> */}
 
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+        {/* <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <EcommerceLatestProducts title="Latest products" list={_ecommerceLatestProducts} />
-        </Grid>
+        </Grid> */}
       </Grid>
     </DashboardContent>
   );

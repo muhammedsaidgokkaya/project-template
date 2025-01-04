@@ -11,7 +11,7 @@ import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function EcommerceWidgetSummary({ title, percent, total, chart, sx, ...other }) {
+export function MetaWidgetSummary({ title, percent, total, chart, sx, ...other }) {
   const theme = useTheme();
 
   const chartColors = chart.colors ?? [theme.palette.primary.light, theme.palette.primary.main];
@@ -45,7 +45,7 @@ export function EcommerceWidgetSummary({ title, percent, total, chart, sx, ...ot
 
   const renderTrending = () => (
     <Box sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
-      <Box
+      {/* <Box
         component="span"
         sx={{
           width: 24,
@@ -78,10 +78,10 @@ export function EcommerceWidgetSummary({ title, percent, total, chart, sx, ...ot
       <Box component="span" sx={{ typography: 'subtitle2' }}>
         {percent > 0 && '+'}
         {fPercent(percent)}
-      </Box>
+      </Box> */}
 
       <Box component="span" sx={{ color: 'text.secondary', typography: 'body2' }}>
-        geçen hafta
+        Son 6 ay
       </Box>
     </Box>
   );
@@ -96,7 +96,7 @@ export function EcommerceWidgetSummary({ title, percent, total, chart, sx, ...ot
 
         <Box sx={{ my: 1.5, typography: 'h3' }}>{fNumber(total)}</Box>
 
-        {/* {renderTrending()} */}
+        {renderTrending()}
       </Box>
 
       <Chart

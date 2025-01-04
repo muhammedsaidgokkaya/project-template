@@ -32,13 +32,13 @@ export function OverviewAnalyticsView() {
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
-            title="Weekly sales"
+            title="Aktif Kullanıcılar"
             percent={2.6}
             total={714000}
             icon={
               <img
-                alt="Weekly sales"
-                src={`${CONFIG.assetsDir}/assets/icons/glass/ic-glass-bag.svg`}
+                alt="Aktif Kullanıcılar"
+                src={`${CONFIG.assetsDir}/assets/icons/glass/active.svg`}
               />
             }
             chart={{
@@ -50,13 +50,13 @@ export function OverviewAnalyticsView() {
 
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
-            title="New users"
+            title="Yeni Kullanıcılar"
             percent={-0.1}
             total={1352831}
             color="secondary"
             icon={
               <img
-                alt="New users"
+                alt="Yeni Kullanıcılar"
                 src={`${CONFIG.assetsDir}/assets/icons/glass/ic-glass-users.svg`}
               />
             }
@@ -69,14 +69,14 @@ export function OverviewAnalyticsView() {
 
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
-            title="Purchase orders"
+            title="Olaylar"
             percent={2.8}
             total={1723315}
             color="warning"
             icon={
               <img
-                alt="Purchase orders"
-                src={`${CONFIG.assetsDir}/assets/icons/glass/ic-glass-buy.svg`}
+                alt="Olaylar"
+                src={`${CONFIG.assetsDir}/assets/icons/glass/event.svg`}
               />
             }
             chart={{
@@ -88,14 +88,14 @@ export function OverviewAnalyticsView() {
 
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
-            title="Messages"
+            title="Etkileşimli oturum"
             percent={3.6}
             total={234}
             color="error"
             icon={
               <img
-                alt="Messages"
-                src={`${CONFIG.assetsDir}/assets/icons/glass/ic-glass-message.svg`}
+                alt="Etkileşimli oturum"
+                src={`${CONFIG.assetsDir}/assets/icons/glass/session.svg`}
               />
             }
             chart={{
@@ -133,15 +133,14 @@ export function OverviewAnalyticsView() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, lg: 8 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <AnalyticsConversionRates
             title="Conversion rates"
             subheader="(+43%) than last year"
             chart={{
-              categories: ['Italy', 'Japan', 'China', 'Canada', 'France'],
+              categories: ['Italy', 'Japan', 'China', 'Canada', 'France', 'Japan', 'China', 'Canada', 'France'],
               series: [
-                { name: '2022', data: [44, 55, 41, 64, 22] },
-                { name: '2023', data: [53, 32, 33, 52, 13] },
+                { name: '2022', data: [44, 55, 41, 64, 22, 55, 41, 64, 22] },
               ],
             }}
           />

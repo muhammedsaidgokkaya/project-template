@@ -60,10 +60,8 @@ export function AnalyticsWidgetSummary({
         alignItems: 'center',
       }}
     >
-      <Iconify width={20} icon={percent < 0 ? 'eva:trending-down-fill' : 'eva:trending-up-fill'} />
       <Box component="span" sx={{ typography: 'subtitle2' }}>
-        {percent > 0 && '+'}
-        {fPercent(percent)}
+        Son 120 gün
       </Box>
     </Box>
   );

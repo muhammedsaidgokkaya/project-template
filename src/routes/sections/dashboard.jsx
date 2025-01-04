@@ -10,7 +10,7 @@ import { AccountLayout } from 'src/sections/account/account-layout';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
-const OverviewEcommercePage = lazy(() => import('src/pages/dashboard/ecommerce'));
+const OverviewMetaPage = lazy(() => import('src/pages/dashboard/meta'));
 const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
@@ -90,7 +90,7 @@ export const dashboardRoutes = [
     element: dashboardLayout(),
     children: [
       { index: true, element: <IndexPage /> },
-      { path: 'ecommerce', element: <OverviewEcommercePage /> },
+      { path: 'meta', element: <OverviewMetaPage /> },
       { path: 'analytics', element: <OverviewAnalyticsPage /> },
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'booking', element: <OverviewBookingPage /> },
