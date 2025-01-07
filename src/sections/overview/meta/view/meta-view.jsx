@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid2';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { useTheme } from '@mui/material/styles';
+import { CONFIG } from 'src/global-config';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { MetaWidgetSummary } from '../meta-widget-summary';
@@ -58,7 +59,7 @@ export function MetaView() {
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
 
-    fetch('https://localhost:44327/api/Meta/charts', {
+    fetch(`${CONFIG.apiUrl}/Meta/charts`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

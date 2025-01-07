@@ -1,54 +1,56 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
-import { CONFIG } from 'src/global-config';
-import { fNumber } from 'src/utils/format-number';
 
+import { CONFIG } from 'src/global-config';
+
+import { fNumber } from 'src/utils/format-number';
 import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function AnalyticsConversionRates({ title, subheader, dimension, metric, seriesName, startDate, endDate, sx, ...other }) {
+export function DataConversionRates({ title, subheader, dimensions, startDate, endDate, sx, ...other }) {
   const theme = useTheme();
-const [chartData, setChartData] = useState({ series: [], labels: [] });
+
+  const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
-    const fetchChartData = async (start, end) => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboard-dimensions-ten?dimension=${dimension}&metric=${metric}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
+        const response = await fetch(`${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-ten?dimensions=${dimensions}&startDate=${startDate}&endDate=${endDate}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
         });
+  
         const data = await response.json();
-        const chartSeries = [{
-          name: seriesName,
-          data: data.map((item) => item.metric),
-        }];
-        const chartLabels = data.map((item) => item.dimension);
 
+        const clicksData = data.map((row) => row.clicks);
+        const categories = data.map((row) => row.keys);
         setChartData({
-          series: chartSeries,
-          labels: chartLabels,
+          categories,
+          series: [
+            { name: 'Tıklama', data: clicksData },
+          ],
         });
       } catch (error) {
-        console.error('Error fetching data', error);
+        console.error('Error fetching chart data:', error);
       }
     };
 
-    fetchChartData(startDate, endDate);
-  }, [dimension, metric, startDate, endDate]);
+    fetchData();
+  }, [dimensions, startDate, endDate]);
 
-  const chartSeries = chartData.series;
-  const chartCategories = chartData.labels;
-  const chartColors = chartData.colors ?? [
-    theme.palette.primary.dark,
-    hexAlpha(theme.palette.primary.dark, 0.24),
-  ];
+  const chartColors = chartData
+    ? [
+        theme.palette.primary.dark,
+        hexAlpha(theme.palette.primary.dark, 0.24),
+      ]
+    : [];
 
   const chartOptions = useChart({
     colors: chartColors,
@@ -61,7 +63,7 @@ const [chartData, setChartData] = useState({ series: [], labels: [] });
         title: { formatter: (seriesName) => `${seriesName}: ` },
       },
     },
-    xaxis: { categories: chartCategories },
+    xaxis: { categories: chartData?.categories || [] },
     dataLabels: {
       enabled: true,
       offsetX: -6,
@@ -75,25 +77,28 @@ const [chartData, setChartData] = useState({ series: [], labels: [] });
         dataLabels: { position: 'top' },
       },
     },
-    ...chartData.options,
   });
 
   return (
     <Card sx={sx} {...other}>
       <CardHeader title={title} subheader={subheader} />
 
-      <Chart
-        type="bar"
-        series={chartSeries}
-        options={chartOptions}
-        slotProps={{ loading: { p: 2.5 } }}
-        sx={{
-          pl: 1,
-          py: 2.5,
-          pr: 2.5,
-          height: 360,
-        }}
-      />
+      {chartData ? (
+        <Chart
+          type="bar"
+          series={chartData.series}
+          options={chartOptions}
+          slotProps={{ loading: { p: 2.5 } }}
+          sx={{
+            pl: 1,
+            py: 2.5,
+            pr: 2.5,
+            height: 360,
+          }}
+        />
+      ) : (
+        <p style={{ padding: '16px', textAlign: 'center' }}>Yükleniyor...</p>
+      )}
     </Card>
   );
 }

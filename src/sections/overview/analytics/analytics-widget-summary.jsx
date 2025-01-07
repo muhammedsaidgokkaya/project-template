@@ -61,7 +61,7 @@ export function AnalyticsWidgetSummary({
       }}
     >
       <Box component="span" sx={{ typography: 'subtitle2' }}>
-        Son 120 gün
+        
       </Box>
     </Box>
   );

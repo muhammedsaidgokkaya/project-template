@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import TextField  from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-
+import { CONFIG } from 'src/global-config';
 import { RouterLink } from 'src/routes/components';
 
 import { Iconify } from 'src/components/iconify';
@@ -19,7 +19,7 @@ export function LoginAppView() {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const response = await fetch('https://localhost:44327/api/auth/login', {
+    const response = await fetch(`${CONFIG.apiUrl}/auth/login`, {
       method: 'POST',
       body: JSON.stringify({ username, password }),
       headers: { 'Content-Type': 'application/json' },

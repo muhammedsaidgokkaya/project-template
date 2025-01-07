@@ -59,7 +59,7 @@ export const navData = [
       { title: 'Meta', path: paths.dashboard.general.ecommerce, icon: ICONS.meta },
       { title: 'Google', path: paths.dashboard.general.banking, icon: ICONS.google_ads },
       { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-      { title: 'Search Console', path: paths.dashboard.general.booking, icon: ICONS.search_console },
+      { title: 'Search Console', path: paths.dashboard.general.search_console, icon: ICONS.search_console },
     ],
   },
   /**

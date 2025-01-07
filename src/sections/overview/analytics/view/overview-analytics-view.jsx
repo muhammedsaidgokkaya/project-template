@@ -1,40 +1,77 @@
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Grid from '@mui/material/Grid2';
-import Typography from '@mui/material/Typography';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import 'dayjs/locale/tr'
 
-import { CONFIG } from 'src/global-config';
 import { DashboardContent } from 'src/layouts/dashboard';
-import {
-  _analyticTasks,
-  _analyticPosts,
-  _analyticTraffic,
-  _analyticOrderTimeline,
-} from 'src/_mock';
+import { CONFIG } from 'src/global-config';
 
-import { AnalyticsNews } from '../analytics-news';
-import { AnalyticsTasks } from '../analytics-tasks';
-import { AnalyticsCurrentVisits } from '../analytics-current-visits';
-import { AnalyticsOrderTimeline } from '../analytics-order-timeline';
-import { AnalyticsWebsiteVisits } from '../analytics-website-visits';
+const GeneralAnalytics = lazy(() => import('./general-analytics'));
+const DetailAnalytics = lazy(() => import('./detail-analytics'));
+
 import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
-import { AnalyticsTrafficBySite } from '../analytics-traffic-by-site';
-import { AnalyticsCurrentSubject } from '../analytics-current-subject';
-import { AnalyticsConversionRates } from '../analytics-conversion-rates';
 
 // ----------------------------------------------------------------------
 
 export function OverviewAnalyticsView() {
+  const [currentTab, setCurrentTab] = useState(0);
+  const [dashboardData, setDashboardData] = useState([]);
+  const [startDate, setStartDate] = useState(dayjs().subtract(120, 'days'));
+  const [endDate, setEndDate] = useState(dayjs());
+
+  const handleTabChange = (event, newValue) => {
+    setCurrentTab(newValue);
+  };
+
+  const fetchDashboardData = async (start, end) => {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboards?startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setDashboardData(data);
+    } catch (error) {
+      console.error('Dashboard verisi alınırken bir hata oluştu', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData(startDate, endDate);
+  }, [startDate, endDate]);
+
+  const prepareChartData = (data) => {
+    const categories = data.map(item => dayjs(item.month).locale('tr').format('MMMM'));
+    
+    const series = {
+      activeUsers: data.map(item => item.data[0].activeUsers),
+      eventCount: data.map(item => item.data[0].eventCount),
+      newUsers: data.map(item => item.data[0].newUsers),
+      engagedSessions: data.map(item => item.data[0].engagedSessions),
+    };
+  
+    return { categories, series };
+  };
+
+  const { categories, series } = prepareChartData(dashboardData);
+
   return (
     <DashboardContent maxWidth="xl">
-      <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
-        Hi, Welcome back 👋
-      </Typography>
-
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
             title="Aktif Kullanıcılar"
-            percent={2.6}
-            total={714000}
+            percent={series.activeUsers ? series.activeUsers[0] : 0}
+            total={series.activeUsers.reduce((a, b) => a + b, 0)}
             icon={
               <img
                 alt="Aktif Kullanıcılar"
@@ -42,8 +79,8 @@ export function OverviewAnalyticsView() {
               />
             }
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [22, 8, 35, 50, 82, 84, 77, 12],
+              categories: categories,
+              series: series.activeUsers,
             }}
           />
         </Grid>
@@ -51,8 +88,8 @@ export function OverviewAnalyticsView() {
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
             title="Yeni Kullanıcılar"
-            percent={-0.1}
-            total={1352831}
+            percent={series.newUsers ? series.newUsers[0] : 0}
+            total={series.newUsers.reduce((a, b) => a + b, 0)}
             color="secondary"
             icon={
               <img
@@ -61,8 +98,8 @@ export function OverviewAnalyticsView() {
               />
             }
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [56, 47, 40, 62, 73, 30, 23, 54],
+              categories: categories,
+              series: series.newUsers,
             }}
           />
         </Grid>
@@ -70,8 +107,8 @@ export function OverviewAnalyticsView() {
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
             title="Olaylar"
-            percent={2.8}
-            total={1723315}
+            percent={series.eventCount ? series.eventCount[0] : 0}
+            total={series.eventCount.reduce((a, b) => a + b, 0)}
             color="warning"
             icon={
               <img
@@ -80,100 +117,86 @@ export function OverviewAnalyticsView() {
               />
             }
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [40, 70, 50, 28, 70, 75, 7, 64],
+              categories: categories,
+              series: series.eventCount,
             }}
           />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
-            title="Etkileşimli oturum"
-            percent={3.6}
-            total={234}
+            title="Etkileşimli Oturum"
+            percent={series.engagedSessions ? series.engagedSessions[0] : 0}
+            total={series.engagedSessions.reduce((a, b) => a + b, 0)}
             color="error"
             icon={
               <img
-                alt="Etkileşimli oturum"
+                alt="Etkileşimli Oturum"
                 src={`${CONFIG.assetsDir}/assets/icons/glass/session.svg`}
               />
             }
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [56, 30, 23, 54, 47, 40, 62, 73],
+              categories: categories,
+              series: series.engagedSessions,
             }}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AnalyticsCurrentVisits
-            title="Current visits"
-            chart={{
-              series: [
-                { label: 'America', value: 3500 },
-                { label: 'Asia', value: 2500 },
-                { label: 'Europe', value: 1500 },
-                { label: 'Africa', value: 500 },
-              ],
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <Tabs value={currentTab} onChange={handleTabChange} variant="scrollable">
+            <Tab label="Genel" />
+            <Tab label="Detay" />
+          </Tabs>
+        </Grid>
+
+        <Grid size={{ xs: 12, lg: 3 }}>
+          {/* Buraya tarih aralığı seçimi gibi başka içerikler ekleyebilirsiniz */}
+        </Grid>
+
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <Box
+            sx={{
+              gap: 2,
+              display: 'flex',
+              pr: { xs: 2.5, md: 1 },
+              flexDirection: { xs: 'column', md: 'row' },
+              alignItems: { xs: 'flex-end', md: 'center' },
             }}
-          />
+          >
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="tr">
+              <DatePicker
+                label="Başlangıç Tarihi"
+                value={startDate}
+                onChange={(newValue) => setStartDate(newValue)}
+                slotProps={{ textField: { fullWidth: true } }}
+                sx={{ maxWidth: { md: 180 } }}
+              />
+              <DatePicker
+                label="Bitiş Tarihi"
+                value={endDate}
+                onChange={(newValue) => setEndDate(newValue)}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
+                sx={{
+                  maxWidth: { md: 180 },
+                  [`& .MuiFormHelperText-root`]: {
+                    bottom: { md: -40 },
+                    position: { md: 'absolute' },
+                  },
+                }}
+              />
+            </LocalizationProvider>
+          </Box>
         </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          <AnalyticsWebsiteVisits
-            title="Website visits"
-            subheader="(+43%) than last year"
-            chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-              series: [
-                { name: 'Team A', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
-                { name: 'Team B', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
-              ],
-            }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AnalyticsConversionRates
-            title="Conversion rates"
-            subheader="(+43%) than last year"
-            chart={{
-              categories: ['Italy', 'Japan', 'China', 'Canada', 'France', 'Japan', 'China', 'Canada', 'France'],
-              series: [
-                { name: '2022', data: [44, 55, 41, 64, 22, 55, 41, 64, 22] },
-              ],
-            }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AnalyticsCurrentSubject
-            title="Current subject"
-            chart={{
-              categories: ['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math'],
-              series: [
-                { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
-                { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
-                { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
-              ],
-            }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          <AnalyticsNews title="News" list={_analyticPosts} />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AnalyticsOrderTimeline title="Order timeline" list={_analyticOrderTimeline} />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AnalyticsTrafficBySite title="Traffic by site" list={_analyticTraffic} />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          <AnalyticsTasks title="Tasks" list={_analyticTasks} />
+        
+        <Grid size={{ xs: 12, lg: 12 }}>
+          <Suspense fallback={<div>Yükleniyor...</div>}>
+            {currentTab === 0 && <GeneralAnalytics startDate={startDate} endDate={endDate} />}
+            {currentTab === 1 && <DetailAnalytics startDate={startDate} endDate={endDate}/>}
+          </Suspense>
         </Grid>
       </Grid>
     </DashboardContent>

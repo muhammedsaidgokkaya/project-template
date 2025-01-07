@@ -14,6 +14,7 @@ const OverviewMetaPage = lazy(() => import('src/pages/dashboard/meta'));
 const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
+const OverviewSearchConsolePage = lazy(() => import('src/pages/dashboard/search-console'));
 const OverviewFilePage = lazy(() => import('src/pages/dashboard/file'));
 const OverviewCoursePage = lazy(() => import('src/pages/dashboard/course'));
 // Product
@@ -95,6 +96,7 @@ export const dashboardRoutes = [
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'file', element: <OverviewFilePage /> },
+      { path: 'search-console', element: <OverviewSearchConsolePage /> },
       { path: 'course', element: <OverviewCoursePage /> },
       {
         path: 'user',
