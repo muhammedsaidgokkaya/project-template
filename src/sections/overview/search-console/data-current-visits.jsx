@@ -1,20 +1,57 @@
-import Card from '@mui/material/Card';
-import Divider from '@mui/material/Divider';
+import { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
+import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-
+import Divider from '@mui/material/Divider';
+import { CONFIG } from 'src/global-config';
 import { fNumber } from 'src/utils/format-number';
-
 import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function DataCurrentVisits({ title, subheader, chart, sx, ...other }) {
+export function DataCurrentVisits({ title, subheader, dimension, metric, startDate, endDate, sx, ...other }) {
+  const [chartData, setChartData] = useState([]);
   const theme = useTheme();
 
-  const chartSeries = chart.series.map((item) => item.value);
+  useEffect(() => {
+    const fetchChartData = async (start, end) => {
+      try {
+        const token = localStorage.getItem('jwtToken');
+        const url = metric
+            ? `${CONFIG.apiUrl}/SearchConsole/get-search-console-clicks-four?dimensions=${dimension}&startDate=${start}&endDate=${end}`
+            : `${CONFIG.apiUrl}/SearchConsole/get-search-console-impressions-four?dimensions=${dimension}&startDate=${start}&endDate=${end}`;
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            },
+        });
+        const data = await response.json();
+        if (metric) {
+          const chartSeries = data.map((row) => row.clicks);
+          const chartLabels = data.map((row) => row.keys);
+          setChartData({
+            series: chartSeries,
+            labels: chartLabels,
+          });
+        } else {
+          const chartSeries = data.map((row) => row.impressions);
+          const chartLabels = data.map((row) => row.keys);
+          setChartData({
+            series: chartSeries,
+            labels: chartLabels,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+    fetchChartData(startDate, endDate);
+  }, [dimension, metric, startDate, endDate]);
 
-  const chartColors = chart.colors ?? [
+  const chartColors = chartData?.colors ?? [
     theme.palette.primary.lighter,
     theme.palette.primary.light,
     theme.palette.primary.dark,
@@ -24,7 +61,7 @@ export function DataCurrentVisits({ title, subheader, chart, sx, ...other }) {
   const chartOptions = useChart({
     chart: { sparkline: { enabled: true } },
     colors: chartColors,
-    labels: chart.series.map((item) => item.label),
+    labels: chartData?.labels || [],
     stroke: { width: 0 },
     dataLabels: { enabled: true, dropShadow: { enabled: false } },
     tooltip: {
@@ -34,16 +71,14 @@ export function DataCurrentVisits({ title, subheader, chart, sx, ...other }) {
       },
     },
     plotOptions: { pie: { donut: { labels: { show: false } } } },
-    ...chart.options,
   });
 
   return (
     <Card sx={sx} {...other}>
       <CardHeader title={title} subheader={subheader} />
-
       <Chart
         type="pie"
-        series={chartSeries}
+        series={chartData?.series || []}
         options={chartOptions}
         sx={{
           my: 6,
@@ -52,9 +87,7 @@ export function DataCurrentVisits({ title, subheader, chart, sx, ...other }) {
           height: { xs: 240, xl: 260 },
         }}
       />
-
       <Divider sx={{ borderStyle: 'dashed' }} />
-
       <ChartLegends
         labels={chartOptions?.labels}
         colors={chartOptions?.colors}

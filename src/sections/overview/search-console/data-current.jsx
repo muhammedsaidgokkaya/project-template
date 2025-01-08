@@ -1,63 +1,102 @@
+import { useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
-
+import { CONFIG } from 'src/global-config';
 import { fNumber } from 'src/utils/format-number';
 
 import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function DataCurrent({ title, subheader, chart, sx, ...other }) {
-  const theme = useTheme();
-
-  const chartColors = chart.colors ?? [
-    theme.palette.primary.lighter,
-    theme.palette.primary.light,
-    theme.palette.primary.dark,
-    theme.palette.primary.darker,
-  ];
-
-  const chartSeries = chart.series.map((item) => item.value);
-
-  const chartOptions = useChart({
-    chart: { sparkline: { enabled: true } },
-    colors: chartColors,
-    labels: chart.series.map((item) => item.label),
-    stroke: { width: 0 },
-    tooltip: {
-      y: {
-        formatter: (value) => fNumber(value),
-        title: { formatter: (seriesName) => `${seriesName}` },
+export function DataCurrent({ title, subheader, dimension, metric, startDate, endDate, sx, ...other }) {
+  const [chartData, setChartData] = useState([]);
+    const theme = useTheme();
+  
+    useEffect(() => {
+      const fetchChartData = async (start, end) => {
+        try {
+          const token = localStorage.getItem('jwtToken');
+          const url = metric
+            ? `${CONFIG.apiUrl}/SearchConsole/get-search-console-clicks-four?dimensions=${dimension}&startDate=${start}&endDate=${end}`
+            : `${CONFIG.apiUrl}/SearchConsole/get-search-console-impressions-four?dimensions=${dimension}&startDate=${start}&endDate=${end}`;
+        
+          const response = await fetch(url, {
+              method: 'GET',
+              headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+              },
+          });
+          const data = await response.json();
+          if (metric) {
+            const chartSeries = data.map((row) => row.clicks);
+            const chartLabels = data.map((row) => row.keys);
+            setChartData({
+              series: chartSeries,
+              labels: chartLabels,
+            });
+          } else {
+            const chartSeries = data.map((row) => row.impressions);
+            const chartLabels = data.map((row) => row.keys);
+            setChartData({
+              series: chartSeries,
+              labels: chartLabels,
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching data', error);
+        }
+      };
+  
+      fetchChartData(startDate, endDate);
+    }, [dimension, metric, startDate, endDate]);
+  
+    const chartColors = chartData?.colors ?? [
+      theme.palette.primary.lighter,
+      theme.palette.primary.light,
+      theme.palette.primary.dark,
+      theme.palette.primary.darker,
+    ];
+  
+    const chartOptions = useChart({
+      chart: { sparkline: { enabled: true } },
+      colors: chartColors,
+      labels: chartData?.labels || [],
+      stroke: { width: 0 },
+      tooltip: {
+        y: {
+          formatter: (value) => fNumber(value),
+          title: { formatter: (seriesName) => `${seriesName}` },
+        },
       },
-    },
-    plotOptions: {
-      pie: {
-        donut: {
-          size: '72%',
-          labels: {
-            value: { formatter: (value) => fNumber(value) },
-            total: {
-              formatter: (w) => {
-                const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                return fNumber(sum);
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '72%',
+            labels: {
+              value: { formatter: (value) => fNumber(value) },
+              total: {
+                formatter: (w) => {
+                  const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                  return fNumber(sum);
+                },
               },
             },
           },
         },
       },
-    },
-    ...chart.options,
-  });
-
+      ...chartData.options,
+    });
+  
   return (
     <Card sx={sx} {...other}>
       <CardHeader title={title} subheader={subheader} />
 
       <Chart
         type="donut"
-        series={chartSeries}
+        series={chartData?.series || []}
         options={chartOptions}
         sx={{
           my: 6,

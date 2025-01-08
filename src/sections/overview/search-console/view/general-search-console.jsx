@@ -1,10 +1,10 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
 
-import { DataActivity } from '../data-activity';
 import { DataConversionRates } from '../data-conversion';
 import { DataCurrent } from '../data-current';
 import { DataCurrentVisits } from '../data-current-visits';
+import { DataWebsiteVisits } from '../data-website';
 
 // ----------------------------------------------------------------------
 
@@ -12,25 +12,25 @@ export default function GeneralSearchConsole({ startDate, endDate }) {
   return (
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          {/* <DataActivity
+          <DataWebsiteVisits
             title="Tarih"
             subheader="Gösterim"
-            dimensions="date"
-          /> */}
+            dimension="date"
+            metric={false}
+            seriesName="Gösterim"
+            startDate={startDate}
+            endDate={endDate}
+          />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <DataCurrentVisits
             title="Cihazlar"
             subheader="Gösterim"
-            chart={{
-              series: [
-                { label: 'Mac', value: 12244 },
-                { label: 'Window', value: 53345 },
-                { label: 'iOS', value: 44313 },
-                { label: 'Android', value: 78343 },
-              ],
-            }}
+            dimension="device"
+            metric={false}
+            startDate={startDate}
+            endDate={endDate}
           />
         </Grid>
 
@@ -38,30 +38,31 @@ export default function GeneralSearchConsole({ startDate, endDate }) {
           <DataCurrent
             title="Cihazlar"
             subheader="Tıklama"
-            chart={{
-              series: [
-                { label: 'Mac', value: 12244 },
-                { label: 'Window', value: 53345 },
-                { label: 'iOS', value: 44313 },
-                { label: 'Android', value: 78343 },
-              ],
-            }}
+            dimension="device"
+            metric={true}
+            startDate={startDate}
+            endDate={endDate}
           />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          {/* <DataActivity
-            title="Sorgular"
-            subheader="Gösterim"
-            dimensions="query"
-          /> */}
+          <DataWebsiteVisits
+            title="Ülke"
+            subheader="Tıklama"
+            dimension="country"
+            metric={true}
+            seriesName="Tıklama"
+            startDate={startDate}
+            endDate={endDate}
+          />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, lg: 6 }}>
           <DataConversionRates
             title="Ülkeler"
-            subheader="Tıklama"
+            subheader="Gösterim"
             dimensions="country"
+            metric={false}
             startDate={startDate}
             endDate={endDate}
           />
@@ -72,6 +73,7 @@ export default function GeneralSearchConsole({ startDate, endDate }) {
             title="Sorgular"
             subheader="Tıklama"
             dimensions="query"
+            metric={true}
             startDate={startDate}
             endDate={endDate}
           />

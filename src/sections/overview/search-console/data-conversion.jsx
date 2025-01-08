@@ -10,7 +10,7 @@ import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function DataConversionRates({ title, subheader, dimensions, startDate, endDate, sx, ...other }) {
+export function DataConversionRates({ title, subheader, dimensions, metric, startDate, endDate, sx, ...other }) {
   const theme = useTheme();
 
   const [chartData, setChartData] = useState(null);
@@ -19,7 +19,12 @@ export function DataConversionRates({ title, subheader, dimensions, startDate, e
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const response = await fetch(`${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-ten?dimensions=${dimensions}&startDate=${startDate}&endDate=${endDate}`, {
+        
+        const url = metric
+          ? `${CONFIG.apiUrl}/SearchConsole/get-search-console-clicks-ten?dimensions=${dimensions}&startDate=${startDate}&endDate=${endDate}`
+          : `${CONFIG.apiUrl}/SearchConsole/get-search-console-impressions-ten?dimensions=${dimensions}&startDate=${startDate}&endDate=${endDate}`;
+        
+        const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -28,22 +33,33 @@ export function DataConversionRates({ title, subheader, dimensions, startDate, e
         });
   
         const data = await response.json();
-
-        const clicksData = data.map((row) => row.clicks);
-        const categories = data.map((row) => row.keys);
-        setChartData({
-          categories,
-          series: [
-            { name: 'Tıklama', data: clicksData },
-          ],
-        });
+  
+        if (metric) {
+          const clicksData = data.map((row) => row.clicks);
+          const categories = data.map((row) => row.keys);
+          setChartData({
+            categories,
+            series: [
+              { name: 'Tıklama', data: clicksData },
+            ],
+          });
+        } else {
+          const impressionsData = data.map((row) => row.impressions);
+          const categories = data.map((row) => row.keys);
+          setChartData({
+            categories,
+            series: [
+              { name: 'Gösterim', data: impressionsData },
+            ],
+          });
+        }
       } catch (error) {
         console.error('Error fetching chart data:', error);
       }
     };
-
+  
     fetchData();
-  }, [dimensions, startDate, endDate]);
+  }, [dimensions, startDate, endDate, metric]);
 
   const chartColors = chartData
     ? [
