@@ -29,25 +29,26 @@ export function OverviewSearchConsoleView() {
     setCurrentTab(newValue);
   };
   const fetchDashboardData = async () => {
-      try {
-        const token = localStorage.getItem('jwtToken');
-        const response = await fetch(`${CONFIG.apiUrl}/SearchConsole/get-search-console`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        setDashboardData(data[0]);
-      } catch (error) {
-        console.error('Dashboard verisi alınırken bir hata oluştu', error);
-      }
-    };
+    try {
+      const token = localStorage.getItem('jwtToken');
+      const response = await fetch(`${CONFIG.apiUrl}/SearchConsole/get-search-console?startDate=${startDate}&endDate=${endDate}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const data = await response.json();
+      setDashboardData(data[0]);
+    } catch (error) {
+      console.error('Dashboard verisi alınırken bir hata oluştu', error);
+    }
+  };
   
     useEffect(() => {
       fetchDashboardData();
-    }, []);
+    }, [startDate, endDate]);
 
   return (
     <DashboardContent maxWidth="xl">
@@ -55,7 +56,7 @@ export function OverviewSearchConsoleView() {
         <Grid size={{ xs: 12, md: 3 }}>
           <SearchConsoleWidgetSummary
             title="Toplam Tıklama Sayısı"
-            percent={2.6}
+            percent={dashboardData.clicksChange}
             total={dashboardData.totalClicks}
             icon={
                 <img
@@ -69,7 +70,7 @@ export function OverviewSearchConsoleView() {
         <Grid size={{ xs: 12, md: 3 }}>
           <SearchConsoleWidgetSummary
             title="Toplam Gösterim Sayısı"
-            percent={0.2}
+            percent={dashboardData.impressionsChange}
             total={dashboardData.totalImpressions}
             icon={
                 <img
@@ -83,7 +84,7 @@ export function OverviewSearchConsoleView() {
         <Grid size={{ xs: 12, md: 3 }}>
           <SearchConsoleWidgetSummary
             title="Ortalama Tıklama Oranı (TO)"
-            percent={-0.1}
+            percent={dashboardData.ctrChange}
             total={dashboardData.averageCtr}
             icon={
                 <img
@@ -97,7 +98,7 @@ export function OverviewSearchConsoleView() {
         <Grid size={{ xs: 12, md: 3 }}>
             <SearchConsoleWidgetSummary
                 title="Ortalama Konum"
-                percent={-0.1}
+                percent={dashboardData.positionChange}
                 total={dashboardData.averagePosition}
                 icon={
                     <img

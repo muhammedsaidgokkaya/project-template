@@ -26,7 +26,6 @@ export function DataWebsiteVisits({ title, subheader, dimension, metric, seriesN
         });
     
         const data = await response.json();
-        console.log(data);
         if (metric) {
             const chartSeries = [{
               name: seriesName,

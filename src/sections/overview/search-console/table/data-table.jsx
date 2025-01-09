@@ -55,7 +55,6 @@ export default function DataTableSearchConsole({ dimension, titleName, startDate
         });
         
         const data = await response.json();
-        console.log(data);
         if (Array.isArray(data)) {
           setTableData(data);
         } else {
