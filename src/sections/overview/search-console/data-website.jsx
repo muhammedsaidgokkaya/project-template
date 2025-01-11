@@ -13,9 +13,7 @@ export function DataWebsiteVisits({ title, subheader, dimension, metric, seriesN
     const fetchChartData = async (start, end) => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const url = metric
-            ? `${CONFIG.apiUrl}/SearchConsole/get-search-console-clicks-ten?dimensions=${dimension}&startDate=${startDate}&endDate=${endDate}`
-            : `${CONFIG.apiUrl}/SearchConsole/get-search-console-impressions-ten?dimensions=${dimension}&startDate=${startDate}&endDate=${endDate}`;
+        const url = `${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-ten?dimensions=${dimension}&startDate=${startDate}&endDate=${endDate}`;
         
         const response = await fetch(url, {
             method: 'GET',

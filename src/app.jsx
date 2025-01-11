@@ -25,13 +25,38 @@ export default function App({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
-    if (token) {
-      setIsAuthenticated(true);
-    } else {
-      if (window.location.pathname !== '/login') {
+  
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+  
+    const fetchData = async () => {
+      try {
+        const url = `${CONFIG.apiUrl}/Auth/control`;
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        const userId = await response.json();
+  
+        if (userId === 0) {
+          setIsAuthenticated(false);
+          navigate('/login');
+        } else {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error('Error fetching user control:', error);
         navigate('/login');
       }
-    }
+    };
+  
+    fetchData();
   }, [navigate]);
 
   if (!isAuthenticated) {

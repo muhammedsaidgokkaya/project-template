@@ -20,9 +20,7 @@ export function DataConversionRates({ title, subheader, dimensions, metric, star
       try {
         const token = localStorage.getItem('jwtToken');
         
-        const url = metric
-          ? `${CONFIG.apiUrl}/SearchConsole/get-search-console-clicks-ten?dimensions=${dimensions}&startDate=${startDate}&endDate=${endDate}`
-          : `${CONFIG.apiUrl}/SearchConsole/get-search-console-impressions-ten?dimensions=${dimensions}&startDate=${startDate}&endDate=${endDate}`;
+        const url = `${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-ten?dimensions=${dimensions}&startDate=${startDate}&endDate=${endDate}`;
         
         const response = await fetch(url, {
           method: 'GET',
