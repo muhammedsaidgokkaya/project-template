@@ -61,7 +61,7 @@ export function OverviewSearchConsoleView() {
             icon={
                 <img
                     alt="Aktif Kullanıcılar"
-                    src={`${CONFIG.assetsDir}/assets/icons/glass/clicks.svg`}
+                    src={`${CONFIG.assetsDir}/assets/icons/glass/clicks-white.svg`}
                 />
             }
           />
@@ -75,7 +75,7 @@ export function OverviewSearchConsoleView() {
             icon={
                 <img
                     alt="Aktif Kullanıcılar"
-                    src={`${CONFIG.assetsDir}/assets/icons/glass/impression.svg`}
+                    src={`${CONFIG.assetsDir}/assets/icons/glass/impression-white.svg`}
                 />
             }
           />
@@ -89,7 +89,7 @@ export function OverviewSearchConsoleView() {
             icon={
                 <img
                     alt="Aktif Kullanıcılar"
-                    src={`${CONFIG.assetsDir}/assets/icons/glass/percentage.svg`}
+                    src={`${CONFIG.assetsDir}/assets/icons/glass/percentage-white.svg`}
                 />
             }
           />
@@ -103,7 +103,7 @@ export function OverviewSearchConsoleView() {
                 icon={
                     <img
                         alt="Aktif Kullanıcılar"
-                        src={`${CONFIG.assetsDir}/assets/icons/glass/position.svg`}
+                        src={`${CONFIG.assetsDir}/assets/icons/glass/position-white.svg`}
                     />
                 }
             />

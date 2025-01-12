@@ -72,10 +72,11 @@ export function OverviewAnalyticsView() {
             title="Aktif Kullanıcılar"
             percent={series.activeUsers ? series.activeUsers[0] : 0}
             total={series.activeUsers.reduce((a, b) => a + b, 0)}
+            color="info"
             icon={
               <img
                 alt="Aktif Kullanıcılar"
-                src={`${CONFIG.assetsDir}/assets/icons/glass/active.svg`}
+                src={`${CONFIG.assetsDir}/assets/icons/glass/active-user.svg`}
               />
             }
             chart={{
