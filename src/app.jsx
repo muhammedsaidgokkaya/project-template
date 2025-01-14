@@ -1,6 +1,5 @@
 import 'src/global.css';
 
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,93 +25,77 @@ export default function App({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
     const currentPath = window.location.pathname;
-  
+
     if (['/register', '/call-back-meta', '/call-back-google'].includes(currentPath)) {
       return;
-    }else if(!token) {
-      setIsAuthenticated(false);
-      navigate('/login');
+    }
+
+    if (!token) {
+      handleUnauthenticated('/login');
       return;
     }
-  
-    const fetchData = async () => {
+
+    const validateToken = async () => {
       try {
-        const url = `${CONFIG.apiUrl}/Auth/control`;
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
-        const userId = await response.json();
-  
-        if (userId === 0) {
-          setIsAuthenticated(false);
-          navigate('/login');
-        } else {
-          const controlMetaUrl = `${CONFIG.apiUrl}/Auth/meta-token-control`;
-          const tokenMetaControl = await fetch(controlMetaUrl, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const tokenMetaControlResult = await tokenMetaControl.json();
-
-          const controlGoogleUrl = `${CONFIG.apiUrl}/Auth/google-token-control`;
-          const tokenGoogleControl = await fetch(controlGoogleUrl, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const tokenGoogleControlResult = await tokenGoogleControl.json();
-
-        if (tokenMetaControlResult === 0 || tokenGoogleControlResult === 0) {
-          setIsAuthenticated(false);
-          navigate('/connect');
-        } else {
-          setIsAuthenticated(true);
-        }
-        }
+        await validateUserToken(token);
+        await validateThirdPartyTokens(token);
+        await validateOrganization(token);
+        setIsAuthenticated(true);
       } catch (error) {
-        setIsAuthenticated(false);
-        navigate('/login');
+        handleUnauthenticated(error.redirectPath || '/login');
       }
     };
-  
-    fetchData();
+
+    validateToken();
   }, [navigate]);
 
-  if (!isAuthenticated) {
-    return (
-      <I18nProvider>
-        <SettingsProvider defaultSettings={defaultSettings}>
-          <LocalizationProvider>
-            <ThemeProvider
-              noSsr
-              defaultMode={themeConfig.defaultMode}
-              modeStorageKey={themeConfig.modeStorageKey}
-            >
-              <MotionLazy>
-                <CheckoutProvider>
-                  <Snackbar />
-                  <ProgressBar />
-                  <SettingsDrawer defaultSettings={defaultSettings} />
-                  {children}
-                </CheckoutProvider>
-              </MotionLazy>
-            </ThemeProvider>
-          </LocalizationProvider>
-        </SettingsProvider>
-      </I18nProvider>
-    );
-  }
-  
+  const handleUnauthenticated = (path) => {
+    setIsAuthenticated(false);
+    navigate(path);
+  };
+
+  const validateUserToken = async (token) => {
+    const url = `${CONFIG.apiUrl}/Auth/control`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const userId = await response.json();
+    if (userId === 0) throw { redirectPath: '/login' };
+  };
+
+  const validateThirdPartyTokens = async (token) => {
+    const metaControlUrl = `${CONFIG.apiUrl}/Auth/meta-token-control`;
+    const googleControlUrl = `${CONFIG.apiUrl}/Auth/google-token-control`;
+
+    const [metaResponse, googleResponse] = await Promise.all([
+      fetch(metaControlUrl, { method: 'GET', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } }),
+      fetch(googleControlUrl, { method: 'GET', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } }),
+    ]);
+
+    const [metaResult, googleResult] = await Promise.all([metaResponse.json(), googleResponse.json()]);
+
+    if (metaResult === 0 || googleResult === 0) throw { redirectPath: '/connect' };
+  };
+
+  const validateOrganization = async (token) => {
+    const url = `${CONFIG.apiUrl}/Auth/organization-control`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    if (result === 0) throw { redirectPath: '/account-setting' };
+  };
+
   return (
     <I18nProvider>
       <SettingsProvider defaultSettings={defaultSettings}>

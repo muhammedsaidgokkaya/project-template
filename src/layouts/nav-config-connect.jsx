@@ -8,10 +8,12 @@ const icon = (name) => <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/$
 
 const ICONS = {
     connect: icon('ic-connect'),
+    account_setting: icon('ic-setting'),
 };
 
 // ----------------------------------------------------------------------
 
 export const _account = [
   { label: 'Bağlan', href: paths.connect, icon: ICONS.connect },
+  { label: 'Hesap Ayarları', href: paths.account_setting, icon: ICONS.account_setting },
 ];

@@ -17,6 +17,7 @@ const ROOTS = {
 
 export const paths = {
   connect: '/connect',
+  account_setting: '/account-setting',
   comingSoon: '/coming-soon',
   maintenance: '/maintenance',
   pricing: '/pricing',

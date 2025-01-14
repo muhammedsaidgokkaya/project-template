@@ -129,9 +129,11 @@ export function RegisterAppView() {
       });
       const resultPhoto = await responsePhoto.json();
 
-      toast.success("Kayıt oluşturuldu!", { duration: 3000 });
-      toast.success("Lütfen mailinize gönderilen giriş bilgileriyle giriş yapınız!", { duration: 5000 });
-      window.location.href = '/login';
+      toast.success("Kayıt oluşturuldu!");
+      toast.success("Lütfen mailinize gönderilen giriş bilgileriyle giriş yapınız!");
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 3000);
     } catch (error) {
       toast.error("Bir hata oluştu!");
     }
