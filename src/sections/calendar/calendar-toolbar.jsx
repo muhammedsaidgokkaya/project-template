@@ -15,10 +15,10 @@ import { CustomPopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 const VIEW_OPTIONS = [
-  { value: 'dayGridMonth', label: 'Month', icon: 'mingcute:calendar-month-line' },
-  { value: 'timeGridWeek', label: 'Week', icon: 'mingcute:calendar-week-line' },
-  { value: 'timeGridDay', label: 'Day', icon: 'mingcute:calendar-day-line' },
-  { value: 'listWeek', label: 'Agenda', icon: 'fluent:calendar-agenda-24-regular' },
+  { value: 'dayGridMonth', label: 'Ay', icon: 'mingcute:calendar-month-line' },
+  { value: 'timeGridWeek', label: 'Hafta', icon: 'mingcute:calendar-week-line' },
+  { value: 'timeGridDay', label: 'Gün', icon: 'mingcute:calendar-day-line' },
+  { value: 'listWeek', label: 'Ajanda', icon: 'fluent:calendar-agenda-24-regular' },
 ];
 
 // ----------------------------------------------------------------------
@@ -100,7 +100,7 @@ export function CalendarToolbar({
 
         <Box sx={{ gap: 1, display: 'flex', alignItems: 'center' }}>
           <Button size="small" color="error" variant="contained" onClick={onToday}>
-            Today
+            Bugün
           </Button>
 
           <IconButton onClick={onOpenFilters}>

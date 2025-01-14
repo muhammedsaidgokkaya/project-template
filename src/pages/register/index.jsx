@@ -1,21 +1,19 @@
 import { Helmet } from 'react-helmet-async';
 
-import { CONFIG } from 'src/global-config';
-
-import { CalendarView } from 'src/sections/calendar/view';
+import { RegisterAppView } from 'src/sections/overview/app/register';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Takvim - ${CONFIG.appName}` };
+const metadata = { title: `Dijitals` };
 
-export default function Page() {
+export default function Register() {
   return (
     <>
       <Helmet>
         <title> {metadata.title}</title>
       </Helmet>
 
-      <CalendarView />
+      <RegisterAppView />
     </>
   );
 }

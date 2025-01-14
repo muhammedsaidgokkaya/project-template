@@ -25,8 +25,12 @@ export default function App({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
+    const currentPath = window.location.pathname;
   
-    if (!token) {
+    if (['/register', '/call-back-meta', '/call-back-google'].includes(currentPath)) {
+      return;
+    }else if(!token) {
+      setIsAuthenticated(false);
       navigate('/login');
       return;
     }
@@ -48,10 +52,35 @@ export default function App({ children }) {
           setIsAuthenticated(false);
           navigate('/login');
         } else {
+          const controlMetaUrl = `${CONFIG.apiUrl}/Auth/meta-token-control`;
+          const tokenMetaControl = await fetch(controlMetaUrl, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const tokenMetaControlResult = await tokenMetaControl.json();
+
+          const controlGoogleUrl = `${CONFIG.apiUrl}/Auth/google-token-control`;
+          const tokenGoogleControl = await fetch(controlGoogleUrl, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const tokenGoogleControlResult = await tokenGoogleControl.json();
+
+        if (tokenMetaControlResult === 0 || tokenGoogleControlResult === 0) {
+          setIsAuthenticated(false);
+          navigate('/connect');
+        } else {
           setIsAuthenticated(true);
         }
+        }
       } catch (error) {
-        console.error('Error fetching user control:', error);
+        setIsAuthenticated(false);
         navigate('/login');
       }
     };

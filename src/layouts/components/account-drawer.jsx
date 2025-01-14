@@ -33,8 +33,17 @@ export function AccountDrawer({ data = [], sx, ...other }) {
   const [user, setUser] = useState(null);
 
   const token = localStorage.getItem('jwtToken');
-  const decoded = jwtDecode(token);
-  const userId = decoded.userId;
+  let decoded = null;
+
+  if (token) {
+    try {
+      decoded = jwtDecode(token);
+    } catch (error) {
+      window.location.href = '/login';
+    }
+  }
+
+  const userId = decoded ? decoded.userId : null;
 
   const imageSrc = [
     `/user/${userId}.png`,
@@ -47,7 +56,6 @@ export function AccountDrawer({ data = [], sx, ...other }) {
   }) || user?.firstName?.charAt(0)?.toUpperCase();
   
   useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
     const fetchUserData = async () => {
       try {
         const response = await fetch(`${CONFIG.apiUrl}/Organization/drawer`, {
@@ -67,9 +75,8 @@ export function AccountDrawer({ data = [], sx, ...other }) {
         console.error('Veri çekme hatası:', error);
       }
     };
-
-    fetchUserData();
-  }, []);
+    if (token) {fetchUserData();}
+  }, [token]);
   const pathname = usePathname();
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();

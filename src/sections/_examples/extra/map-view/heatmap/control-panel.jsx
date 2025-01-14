@@ -31,7 +31,7 @@ export function MapControlPanel({
   return (
     <ControlPanelRoot>
       <FormControlLabel
-        label="All days"
+        label="Tüm Gün"
         labelPlacement="start"
         control={
           <Switch

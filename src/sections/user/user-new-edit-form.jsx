@@ -168,11 +168,8 @@ export function UserNewEditForm() {
         const formData = new FormData();
         formData.append("photo", photo);
         formData.append("userId", userId);  
-        const responsePhoto = await fetch(`${CONFIG.apiUrl}/Organization/add-photo`, {
+        const responsePhoto = await fetch(`${CONFIG.apiUrl}/Register/add-photo`, {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           body: formData,
         });
 

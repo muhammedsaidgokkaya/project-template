@@ -6,6 +6,8 @@ import packageJson from '../package.json';
 
 export const CONFIG = {
   apiUrl: "https://localhost:44327/api",
+  metaUrl: "http://localhost:3030/call-back-meta",
+  googleUrl: "http://localhost:3030/call-back-google",
   appName: 'Dijitals',
   appVersion: packageJson.version,
   serverUrl: process.env.REACT_APP_SERVER_URL ?? '',

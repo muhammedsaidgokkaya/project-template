@@ -16,6 +16,7 @@ const ROOTS = {
 // ----------------------------------------------------------------------
 
 export const paths = {
+  connect: '/connect',
   comingSoon: '/coming-soon',
   maintenance: '/maintenance',
   pricing: '/pricing',
@@ -136,5 +137,6 @@ export const paths = {
   },
   auth: {
     login: `${ROOTS.AUTH}/login`,
+    register: `${ROOTS.AUTH}/register`,
   }
 };
