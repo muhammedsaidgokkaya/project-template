@@ -2,6 +2,7 @@ import React, { useEffect, useState, lazy, Suspense } from 'react';
 import Grid from '@mui/material/Grid2';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { CONFIG } from 'src/global-config';
 
@@ -22,6 +23,8 @@ export function MetaView() {
   const [loading, setLoading] = useState(true);
   const [apiData, setApiData] = useState({});
   const [currentTab, setCurrentTab] = useState(0);
+  const [metaAccounts, setMetaAccounts] = useState([]);
+  const [selectedAccountId, setSelectedAccountId] = useState('');
 
   const capitalizeFirstLetter = (string) =>
     string.charAt(0).toUpperCase() + string.slice(1);
@@ -58,8 +61,7 @@ export function MetaView() {
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
-
-    fetch(`${CONFIG.apiUrl}/Meta/charts`, {
+    fetch(`${CONFIG.apiUrl}/Meta/meta-account`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -68,14 +70,38 @@ export function MetaView() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setApiData(data);
-        setLoading(false);
+        setMetaAccounts(data);
+        setSelectedAccountId(data[0].accountId);
       })
       .catch((error) => {
         console.error('API isteği sırasında hata oluştu:', error);
-        setLoading(false);
       });
+  }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+
+    if (selectedAccountId) {
+      fetch(`${CONFIG.apiUrl}/Meta/charts?accountId=${selectedAccountId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setApiData(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('API isteği sırasında hata oluştu:', error);
+          setLoading(false);
+        });
+    }
+  }, [selectedAccountId]);
+
+  useEffect(() => {
     if (loading || !apiData) return;
 
     const last6MonthsData = getLast6Months();
@@ -197,7 +223,7 @@ export function MetaView() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, lg: 12 }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <Tabs value={currentTab} onChange={handleTabChange} variant="scrollable">
             <Tab label="Kampanyalar" />
             <Tab label="Reklam Setleri" />
@@ -205,13 +231,35 @@ export function MetaView() {
           </Tabs>
         </Grid>
 
+        <Grid size={{ xs: 12, lg: 3 }}>
+          
+        </Grid>
+        
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <FormControl fullWidth>
+            <InputLabel>Reklam Hesapları</InputLabel>
+            <Select
+              value={selectedAccountId}
+              onChange={(event) => setSelectedAccountId(event.target.value)}
+              label="Reklam Hesapları"
+            >
+              {metaAccounts.map((account) => (
+                <MenuItem key={account.accountId} value={account.accountId}>
+                  {account.account}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+
         <Grid size={{ xs: 12, lg: 12 }} >
           <Suspense fallback={<div>Yükleniyor...</div>}>
-            {currentTab === 0 && <CampaignsTab />}
-            {currentTab === 1 && <AdSetsTab />}
-            {currentTab === 2 && <AdsTab />}
+            {currentTab === 0 && selectedAccountId && <CampaignsTab selectedAccountId={selectedAccountId} key={selectedAccountId} />}
+            {currentTab === 1 && selectedAccountId && <AdSetsTab selectedAccountId={selectedAccountId} key={selectedAccountId}/>}
+            {currentTab === 2 && selectedAccountId && <AdsTab selectedAccountId={selectedAccountId} key={selectedAccountId}/>}
           </Suspense>
         </Grid>
+
       </Grid>
     </DashboardContent>
   );

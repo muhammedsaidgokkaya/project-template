@@ -23,7 +23,7 @@ import {
 
 import { SearchConsoleTableRow } from './table-row';
 
-export default function DataTableSearchConsole({ dimension, titleName, startDate, endDate }) {
+export default function DataTableSearchConsole({ selectedAccount, dimension, titleName, startDate, endDate }) {
   const TABLE_HEAD = [
     { id: 'key', label: titleName },
     { id: 'clikcs', label: 'Tıklamalar' },
@@ -46,7 +46,7 @@ export default function DataTableSearchConsole({ dimension, titleName, startDate
         setLoading(true);
         const token = localStorage.getItem('jwtToken'); 
         
-        const response = await fetch(`${CONFIG.apiUrl}/SearchConsole/get-search-console-querys?dimensions=${filters.dimensions}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
+        const response = await fetch(`${CONFIG.apiUrl}/SearchConsole/get-search-console-querys?accountId=${selectedAccount}&dimensions=${filters.dimensions}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -68,7 +68,7 @@ export default function DataTableSearchConsole({ dimension, titleName, startDate
     };
   
     fetchData(startDate, endDate);
-  }, [filters.dimensions, startDate, endDate]);
+  }, [selectedAccount, filters.dimensions, startDate, endDate]);
   
 
   const dataFiltered = applyFilter({

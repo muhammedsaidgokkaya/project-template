@@ -8,7 +8,7 @@ const DataTableSearchConsole = lazy(() => import('../table/data-table'));
 
 // ----------------------------------------------------------------------
 
-export default function DetailSearchConsole({ startDate, endDate }) {
+export default function DetailSearchConsole({ selectedAccount, startDate, endDate }) {
     const [currentDetailTab, setCurrentDetailTab] = useState(0);
 
     const handleDetailTabChange = (event, newValue) => {
@@ -48,12 +48,12 @@ export default function DetailSearchConsole({ startDate, endDate }) {
             </Box>
             <Box sx={{ width: '85%', pl: 2 }}>
                 <Suspense fallback={<div>Yükleniyor...</div>}>
-                    {currentDetailTab === 0 && <DataTableSearchConsole dimension="query" titleName="Sorgular" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 1 && <DataTableSearchConsole dimension="page" titleName="Sayfa Sayısı" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 2 && <DataTableSearchConsole dimension="country" titleName="Ülkeler" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 3 && <DataTableSearchConsole dimension="device" titleName="Cihazlar" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 4 && <DataTableSearchConsole dimension="searchAppearance" titleName="Arama Görünümleri" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 5 && <DataTableSearchConsole dimension="date" titleName="Tarihler" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 0 && <DataTableSearchConsole selectedAccount={selectedAccount} dimension="query" titleName="Sorgular" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 1 && <DataTableSearchConsole selectedAccount={selectedAccount} dimension="page" titleName="Sayfa Sayısı" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 2 && <DataTableSearchConsole selectedAccount={selectedAccount} dimension="country" titleName="Ülkeler" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 3 && <DataTableSearchConsole selectedAccount={selectedAccount} dimension="device" titleName="Cihazlar" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 4 && <DataTableSearchConsole selectedAccount={selectedAccount} dimension="searchAppearance" titleName="Arama Görünümleri" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 5 && <DataTableSearchConsole selectedAccount={selectedAccount} dimension="date" titleName="Tarihler" startDate={startDate} endDate={endDate} />}
                 </Suspense>
             </Box>
         </Box>

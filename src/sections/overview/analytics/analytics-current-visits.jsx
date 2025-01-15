@@ -7,16 +7,15 @@ import { CONFIG } from 'src/global-config';
 import { fNumber } from 'src/utils/format-number';
 import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
-export function AnalyticsCurrentVisits({ title, subheader, dimension, metric, startDate, endDate, sx, ...other }) {
+export function AnalyticsCurrentVisits({ title, subheader, selectedAccount, dimension, metric, startDate, endDate, sx, ...other }) {
   const [chartData, setChartData] = useState([]);
   const theme = useTheme();
 
   useEffect(() => {
     const fetchChartData = async (start, end) => {
       try {
-        console.log(start.format('YYYY-MM-DD'));
         const token = localStorage.getItem('jwtToken');
-        const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboard-dimensions-four?dimension=${dimension}&metric=${metric}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
+        const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboard-dimensions-four?accountId=${selectedAccount}&dimension=${dimension}&metric=${metric}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -32,11 +31,13 @@ export function AnalyticsCurrentVisits({ title, subheader, dimension, metric, st
           labels: chartLabels,
         });
       } catch (error) {
-        console.error('Error fetching data', error);
       }
     };
-    fetchChartData(startDate, endDate);
-  }, [dimension, metric, startDate, endDate]);
+    
+    if (selectedAccount) {
+      fetchChartData(startDate, endDate);
+    }
+  }, [selectedAccount, dimension, metric, startDate, endDate]);
 
   const chartColors = chartData?.colors ?? [
     theme.palette.primary.main,

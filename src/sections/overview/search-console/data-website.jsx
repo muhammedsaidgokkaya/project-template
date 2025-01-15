@@ -5,7 +5,7 @@ import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 import { Chart, useChart } from 'src/components/chart';
 import { CONFIG } from 'src/global-config';
 
-export function DataWebsiteVisits({ title, subheader, dimension, metric, seriesName, startDate, endDate, sx, ...other }) {
+export function DataWebsiteVisits({ title, subheader, selectedAccount, dimension, metric, seriesName, startDate, endDate, sx, ...other }) {
   const theme = useTheme();
   const [chartData, setChartData] = useState({ series: [], labels: [] });
 
@@ -13,7 +13,7 @@ export function DataWebsiteVisits({ title, subheader, dimension, metric, seriesN
     const fetchChartData = async (start, end) => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const url = `${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-ten?dimensions=${dimension}&startDate=${startDate}&endDate=${endDate}`;
+        const url = `${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-ten?accountId=${selectedAccount}&dimensions=${dimension}&startDate=${startDate}&endDate=${endDate}`;
         
         const response = await fetch(url, {
             method: 'GET',
@@ -52,8 +52,10 @@ export function DataWebsiteVisits({ title, subheader, dimension, metric, seriesN
       }
     };
 
-    fetchChartData(startDate, endDate);
-  }, [dimension, metric, startDate, endDate]);
+    if (selectedAccount) {
+      fetchChartData(startDate, endDate);
+    }
+  }, [selectedAccount, dimension, metric, startDate, endDate]);
 
   const chartSeries = chartData.series;
   const chartCategories = chartData.labels;

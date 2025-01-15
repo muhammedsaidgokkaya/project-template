@@ -10,7 +10,7 @@ import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function DataConversionRates({ title, subheader, dimensions, metric, startDate, endDate, sx, ...other }) {
+export function DataConversionRates({ title, subheader, selectedAccount, dimensions, metric, startDate, endDate, sx, ...other }) {
   const theme = useTheme();
 
   const [chartData, setChartData] = useState(null);
@@ -20,7 +20,7 @@ export function DataConversionRates({ title, subheader, dimensions, metric, star
       try {
         const token = localStorage.getItem('jwtToken');
         
-        const url = `${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-ten?dimensions=${dimensions}&startDate=${startDate}&endDate=${endDate}`;
+        const url = `${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-ten?accountId=${selectedAccount}&dimensions=${dimensions}&startDate=${startDate}&endDate=${endDate}`;
         
         const response = await fetch(url, {
           method: 'GET',
@@ -55,9 +55,10 @@ export function DataConversionRates({ title, subheader, dimensions, metric, star
         console.error('Error fetching chart data:', error);
       }
     };
-  
-    fetchData();
-  }, [dimensions, startDate, endDate, metric]);
+    if (selectedAccount) {
+      fetchData();
+    }
+  }, [selectedAccount, dimensions, startDate, endDate, metric]);
 
   const chartColors = chartData
     ? [

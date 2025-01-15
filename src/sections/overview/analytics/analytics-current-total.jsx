@@ -10,7 +10,7 @@ import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function AppCurrentDownload({ title, subheader, dimension, metric, startDate, endDate, sx, ...other }) {
+export function AppCurrentDownload({ title, subheader, selectedAccount, dimension, metric, startDate, endDate, sx, ...other }) {
   const [chartData, setChartData] = useState([]);
   const theme = useTheme();
 
@@ -18,7 +18,7 @@ export function AppCurrentDownload({ title, subheader, dimension, metric, startD
     const fetchChartData = async (start, end) => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboard-dimensions-four?dimension=${dimension}&metric=${metric}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
+        const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboard-dimensions-four?accountId=${selectedAccount}&dimension=${dimension}&metric=${metric}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -34,12 +34,13 @@ export function AppCurrentDownload({ title, subheader, dimension, metric, startD
           labels: chartLabels,
         });
       } catch (error) {
-        console.error('Error fetching data', error);
       }
     };
 
-    fetchChartData(startDate, endDate);
-  }, [dimension, metric, startDate, endDate]);
+    if (selectedAccount) {
+      fetchChartData(startDate, endDate);
+    }
+  }, [selectedAccount, dimension, metric, startDate, endDate]);
 
   const chartColors = chartData?.colors ?? [
     theme.palette.primary.lighter,

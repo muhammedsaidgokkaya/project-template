@@ -59,7 +59,7 @@ const TABLE_HEAD = [
   { id: 'status', label: 'Durum' },
 ];
 
-export default function CampaignsTab() {
+export default function AdsTab({selectedAccountId}) {
   const theme = useTheme();
 
   const table = useTable();
@@ -95,7 +95,7 @@ export default function CampaignsTab() {
           if (startDate) queryParams.append('startDate', startDate);
           if (endDate) queryParams.append('endDate', endDate);
 
-          const response = await fetch(`${CONFIG.apiUrl}/Meta/ads?${queryParams.toString()}`, {
+          const response = await fetch(`${CONFIG.apiUrl}/Meta/ads?accountId=${selectedAccountId}&${queryParams.toString()}`, {
               method: 'GET',
               headers: {
                   Authorization: `Bearer ${token}`,

@@ -9,7 +9,7 @@ import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function AnalyticsConversionRates({ title, subheader, dimension, metric, seriesName, startDate, endDate, sx, ...other }) {
+export function AnalyticsConversionRates({ title, subheader, selectedAccount, dimension, metric, seriesName, startDate, endDate, sx, ...other }) {
   const theme = useTheme();
 const [chartData, setChartData] = useState({ series: [], labels: [] });
 
@@ -17,7 +17,7 @@ const [chartData, setChartData] = useState({ series: [], labels: [] });
     const fetchChartData = async (start, end) => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboard-dimensions-ten?dimension=${dimension}&metric=${metric}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
+        const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboard-dimensions-ten?accountId=${selectedAccount}&dimension=${dimension}&metric=${metric}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -36,12 +36,13 @@ const [chartData, setChartData] = useState({ series: [], labels: [] });
           labels: chartLabels,
         });
       } catch (error) {
-        console.error('Error fetching data', error);
       }
     };
 
-    fetchChartData(startDate, endDate);
-  }, [dimension, metric, startDate, endDate]);
+    if (selectedAccount) {
+      fetchChartData(startDate, endDate);
+    }
+  }, [selectedAccount, dimension, metric, startDate, endDate]);
 
   const chartSeries = chartData.series;
   const chartCategories = chartData.labels;

@@ -58,7 +58,7 @@ const TABLE_HEAD = [
   { id: 'status', label: 'Yayın Durumu' },
 ];
 
-export default function CampaignsTab() {
+export default function CampaignsTab({selectedAccountId}) {
   const theme = useTheme();
 
   const table = useTable();
@@ -89,12 +89,11 @@ export default function CampaignsTab() {
               ? new Date(currentFilters.endDate).toISOString().split('T')[0] 
               : null;
 
-          // Sorgu parametrelerini dinamik olarak oluştur
           let queryParams = new URLSearchParams();
           if (startDate) queryParams.append('startDate', startDate);
           if (endDate) queryParams.append('endDate', endDate);
 
-          const response = await fetch(`${CONFIG.apiUrl}/Meta/campaigns?${queryParams.toString()}`, {
+          const response = await fetch(`${CONFIG.apiUrl}/Meta/campaigns?accountId=${selectedAccountId}&${queryParams.toString()}`, {
               method: 'GET',
               headers: {
                   Authorization: `Bearer ${token}`,

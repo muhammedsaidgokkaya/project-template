@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid2';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
@@ -25,13 +26,15 @@ export function OverviewSearchConsoleView() {
   const [dashboardData, setDashboardData] = useState([]);
   const [startDate, setStartDate] = useState(dayjs().subtract(120, 'days'));
   const [endDate, setEndDate] = useState(dayjs());
+  const [accounts, setAccounts] = useState([]);
+  const [selectedAccount, setSelectedAccount] = useState('');
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
   };
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem('jwtToken');
-      const response = await fetch(`${CONFIG.apiUrl}/SearchConsole/get-search-console?startDate=${startDate}&endDate=${endDate}`, {
+      const response = await fetch(`${CONFIG.apiUrl}/SearchConsole/get-search-console?accountId=${selectedAccount}&startDate=${startDate}&endDate=${endDate}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -45,10 +48,35 @@ export function OverviewSearchConsoleView() {
       console.error('Dashboard verisi alınırken bir hata oluştu', error);
     }
   };
+
+  const fetchAccounts = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      const response = await fetch(`${CONFIG.apiUrl}/SearchConsole/search-console-account`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      setAccounts(data);
+      setSelectedAccount(data[0].account);
+    } catch (error) {
+      console.error('Hesap verisi alınırken bir hata oluştu', error);
+    }
+  };
   
-    useEffect(() => {
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  useEffect(() => {
+    if (selectedAccount) {
       fetchDashboardData();
-    }, [startDate, endDate]);
+    }
+  }, [selectedAccount, startDate, endDate]);
 
   return (
     <DashboardContent maxWidth="xl">
@@ -118,6 +146,20 @@ export function OverviewSearchConsoleView() {
         </Grid>
 
         <Grid size={{ xs: 12, lg: 3 }}>
+          <FormControl fullWidth>
+            <InputLabel>Search Console Hesapları</InputLabel>
+            <Select
+              value={selectedAccount}
+              onChange={(event) => setSelectedAccount(event.target.value)}
+              label="Search Console Hesapları"
+            >
+              {accounts.map((account) => (
+                <MenuItem key={account.accountId} value={account.accountId}>
+                  {account.account}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Grid>
 
         <Grid size={{ xs: 12, lg: 3 }}>
@@ -161,8 +203,8 @@ export function OverviewSearchConsoleView() {
         
         <Grid size={{ xs: 12, lg: 12 }}>
           <Suspense fallback={<div>Yükleniyor...</div>}>
-            {currentTab === 0 && <GeneralSearchConsole startDate={startDate} endDate={endDate} />}
-            {currentTab === 1 && <DetailSearchConsole startDate={startDate} endDate={endDate}/>}
+            {currentTab === 0 && <GeneralSearchConsole selectedAccount={selectedAccount} startDate={startDate} endDate={endDate} />}
+            {currentTab === 1 && <DetailSearchConsole selectedAccount={selectedAccount} startDate={startDate} endDate={endDate}/>}
           </Suspense>
         </Grid>
       </Grid>

@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid2';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
@@ -23,6 +24,8 @@ export function OverviewAnalyticsView() {
   const [dashboardData, setDashboardData] = useState([]);
   const [startDate, setStartDate] = useState(dayjs().subtract(120, 'days'));
   const [endDate, setEndDate] = useState(dayjs());
+  const [accounts, setAccounts] = useState([]);
+  const [selectedAccount, setSelectedAccount] = useState('');
 
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
@@ -31,7 +34,7 @@ export function OverviewAnalyticsView() {
   const fetchDashboardData = async (start, end) => {
     try {
       const token = localStorage.getItem('jwtToken');
-      const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboards?startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
+      const response = await fetch(`${CONFIG.apiUrl}/Analytics/dashboards?accountId=${selectedAccount}&startDate=${start.format('YYYY-MM-DD')}&endDate=${end.format('YYYY-MM-DD')}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -45,9 +48,34 @@ export function OverviewAnalyticsView() {
     }
   };
 
+  const fetchAccounts = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      const response = await fetch(`${CONFIG.apiUrl}/Analytics/analytics-account`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      setAccounts(data);
+      setSelectedAccount(data[0].accountId);
+    } catch (error) {
+      console.error('Hesap verisi alınırken bir hata oluştu', error);
+    }
+  };
+  
   useEffect(() => {
-    fetchDashboardData(startDate, endDate);
-  }, [startDate, endDate]);
+    fetchAccounts();
+  }, []);
+
+  useEffect(() => {
+    if (selectedAccount) {
+      fetchDashboardData(startDate, endDate);
+    }
+  }, [selectedAccount, startDate, endDate]);
 
   const prepareChartData = (data) => {
     const categories = data.map(item => dayjs(item.month).locale('tr').format('MMMM'));
@@ -151,7 +179,20 @@ export function OverviewAnalyticsView() {
         </Grid>
 
         <Grid size={{ xs: 12, lg: 3 }}>
-          {/* Buraya tarih aralığı seçimi gibi başka içerikler ekleyebilirsiniz */}
+          <FormControl fullWidth>
+            <InputLabel>Analytics Hesapları</InputLabel>
+            <Select
+              value={selectedAccount}
+              onChange={(event) => setSelectedAccount(event.target.value)}
+              label="Analytics Hesapları"
+            >
+              {accounts.map((account) => (
+                <MenuItem key={account.accountId} value={account.accountId}>
+                  {account.account}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Grid>
 
         <Grid size={{ xs: 12, lg: 3 }}>
@@ -195,8 +236,8 @@ export function OverviewAnalyticsView() {
         
         <Grid size={{ xs: 12, lg: 12 }}>
           <Suspense fallback={<div>Yükleniyor...</div>}>
-            {currentTab === 0 && <GeneralAnalytics startDate={startDate} endDate={endDate} />}
-            {currentTab === 1 && <DetailAnalytics startDate={startDate} endDate={endDate}/>}
+            {currentTab === 0 && <GeneralAnalytics selectedAccount={selectedAccount} startDate={startDate} endDate={endDate} />}
+            {currentTab === 1 && <DetailAnalytics selectedAccount={selectedAccount} startDate={startDate} endDate={endDate}/>}
           </Suspense>
         </Grid>
       </Grid>

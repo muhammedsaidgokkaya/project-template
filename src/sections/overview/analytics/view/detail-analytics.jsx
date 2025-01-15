@@ -8,7 +8,7 @@ const DataTableAnalytics = lazy(() => import('../table/data-table'));
 
 // ----------------------------------------------------------------------
 
-export default function DetailAnalytics({ startDate, endDate }) {
+export default function DetailAnalytics({ selectedAccount, startDate, endDate }) {
     const [currentDetailTab, setCurrentDetailTab] = useState(0);
 
     const handleDetailTabChange = (event, newValue) => {
@@ -54,18 +54,18 @@ export default function DetailAnalytics({ startDate, endDate }) {
             </Box>
             <Box sx={{ width: '85%', pl: 2 }}>
                 <Suspense fallback={<div>Yükleniyor...</div>}>
-                    {currentDetailTab === 0 && <DataTableAnalytics dimension="audienceName" titleName="Kitle" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 1 && <DataTableAnalytics dimension="sessionDefaultChannelGroup" titleName="Varsayılan Kanal Grubu" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 2 && <DataTableAnalytics dimension="landingPage" titleName="Açılış Sayfası" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 3 && <DataTableAnalytics dimension="pageTitle" titleName="Sayfa Başlığı" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 4 && <DataTableAnalytics dimension="unifiedPagePathScreen" titleName="Sayfa Yolu ve Ekran Sınıfı" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 5 && <DataTableAnalytics dimension="unifiedScreenClass" titleName="Sayfa Başlığı ve Ekran Sınıfı" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 6 && <DataTableAnalytics dimension="eventName" titleName="Etkinlik" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 7 && <DataTableAnalytics dimension="browser" titleName="Tarayıcı" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 8 && <DataTableAnalytics dimension="language" titleName="Dil" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 9 && <DataTableAnalytics dimension="continent" titleName="Kıta" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 10 && <DataTableAnalytics dimension="country" titleName="Ülke" startDate={startDate} endDate={endDate} />}
-                    {currentDetailTab === 11 && <DataTableAnalytics dimension="city" titleName="Şehir" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 0 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="audienceName" titleName="Kitle" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 1 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="sessionDefaultChannelGroup" titleName="Varsayılan Kanal Grubu" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 2 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="landingPage" titleName="Açılış Sayfası" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 3 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="pageTitle" titleName="Sayfa Başlığı" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 4 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="unifiedPagePathScreen" titleName="Sayfa Yolu ve Ekran Sınıfı" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 5 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="unifiedScreenClass" titleName="Sayfa Başlığı ve Ekran Sınıfı" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 6 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="eventName" titleName="Etkinlik" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 7 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="browser" titleName="Tarayıcı" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 8 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="language" titleName="Dil" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 9 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="continent" titleName="Kıta" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 10 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="country" titleName="Ülke" startDate={startDate} endDate={endDate} />}
+                    {currentDetailTab === 11 && <DataTableAnalytics selectedAccount={selectedAccount} dimension="city" titleName="Şehir" startDate={startDate} endDate={endDate} />}
                 </Suspense>
             </Box>
         </Box>

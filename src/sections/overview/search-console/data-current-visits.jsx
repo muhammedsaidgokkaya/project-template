@@ -9,7 +9,7 @@ import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function DataCurrentVisits({ title, subheader, dimension, metric, startDate, endDate, sx, ...other }) {
+export function DataCurrentVisits({ title, subheader, selectedAccount, dimension, metric, startDate, endDate, sx, ...other }) {
   const [chartData, setChartData] = useState([]);
   const theme = useTheme();
 
@@ -17,7 +17,7 @@ export function DataCurrentVisits({ title, subheader, dimension, metric, startDa
     const fetchChartData = async (start, end) => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const url = `${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-four?dimensions=${dimension}&startDate=${start}&endDate=${end}`;
+        const url = `${CONFIG.apiUrl}/SearchConsole/get-search-console-chart-four?accountId=${selectedAccount}&dimensions=${dimension}&startDate=${start}&endDate=${end}`;
         
         const response = await fetch(url, {
             method: 'GET',
@@ -46,8 +46,10 @@ export function DataCurrentVisits({ title, subheader, dimension, metric, startDa
         console.error('Error fetching data', error);
       }
     };
-    fetchChartData(startDate, endDate);
-  }, [dimension, metric, startDate, endDate]);
+    if (selectedAccount) {
+      fetchChartData(startDate, endDate);
+    }
+  }, [selectedAccount, dimension, metric, startDate, endDate]);
 
   const chartColors = chartData?.colors ?? [
     theme.palette.primary.lighter,
