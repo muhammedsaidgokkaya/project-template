@@ -25,12 +25,12 @@ export const UpdateUserSchema = zod.object({
   orgAddress: zod.string().min(1, { message: 'Organizasyon Adresi zorunludur!' }),
   zipCode: zod
     .string()
-    .min(1, { message: 'Zip Kodu zorunludur!' })
-    .regex(/^\d+$/, { message: 'Zip Kodu sadece sayısal değerlerden oluşmalıdır!' }),
+    .min(1, { message: 'Posta Kodu zorunludur!' })
+    .regex(/^\d+$/, { message: 'Posta Kodu sadece sayısal değerlerden oluşmalıdır!' }),
   taskNumber: zod
     .string()
-    .min(1, { message: 'Vergi No zorunludur!' })
-    .regex(/^\d+$/, { message: 'Vergi No sadece sayısal değerlerden oluşmalıdır!' }),
+    .min(1, { message: 'Bu alan zorunludur!' })
+    .regex(/^\d+$/, { message: 'Bu alan sadece sayısal değerlerden oluşmalıdır!' }),
   firstName: zod.string().min(1, { message: 'Ad zorunludur!' }),
   lastName: zod.string().min(1, { message: 'Soyad zorunludur!' }),
   mail: zod
@@ -62,6 +62,7 @@ export function AccountGeneral() {
     dateOfBirth: '',
     address: '',
     gender: '',
+    accountType: '',
   });
 
   const defaultValues = {
@@ -103,7 +104,7 @@ export function AccountGeneral() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${CONFIG.apiUrl}/Organization/user`, {
+        const response = await fetch(`${CONFIG.apiUrl}/Organization/admin-user`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -198,6 +199,8 @@ export function AccountGeneral() {
     }
   });
 
+  const taskNumberLabel = currentUser.accountType === 'individual' ? 'TCKN' : 'Vergi No';
+
   return (
       <Form methods={methods} onSubmit={onSubmit}>
         <Grid container spacing={3}>
@@ -212,9 +215,9 @@ export function AccountGeneral() {
                 }}
               >
                 <Field.Text name="name" label="Organizasyon Adı" />
-                <Field.Text name="taskNumber" label="Vergi No" />
+                <Field.Text name="taskNumber" label={taskNumberLabel} />
                 <Field.Text name="orgAddress" multiline rows={4} label="Adres" />
-                <Field.Text name="zipCode" label="Zip Kodu" />
+                <Field.Text name="zipCode" label="Posta Kodu" />
               </Box>
             </Card>
           </Grid>

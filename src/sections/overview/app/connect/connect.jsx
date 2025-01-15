@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CONFIG } from 'src/global-config';
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
@@ -9,6 +10,8 @@ import Typography from '@mui/material/Typography';
 // ----------------------------------------------------------------------
 
 export function ConnectAppView() {
+  const navigate = useNavigate();
+
   const [metaAppId, setMetaAppId] = useState('');
   const [metaConnected, setMetaConnected] = useState(false);
   const [googleConnected, setGoogleConnected] = useState(false);
@@ -28,6 +31,7 @@ export function ConnectAppView() {
     'https://www.googleapis.com/auth/analytics.readonly',
     'https://www.googleapis.com/auth/analytics.manage.users.readonly',
     'https://www.googleapis.com/auth/webmasters',
+    'https://www.googleapis.com/auth/webmasters.readonly',
   ].join(' ');
 
   useEffect(() => {
@@ -74,29 +78,33 @@ export function ConnectAppView() {
       .catch((error) => console.error('Meta App bilgisi alınamadı:', error));
 
       const fetchData = async () => {
-          
-            const controlMetaUrl = `${CONFIG.apiUrl}/Auth/meta-token-control`;
-            const tokenMetaControl = await fetch(controlMetaUrl, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            const tokenMetaControlResult = await tokenMetaControl.json();
-  
-            const controlGoogleUrl = `${CONFIG.apiUrl}/Auth/google-token-control`;
-            const tokenGoogleControl = await fetch(controlGoogleUrl, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            const tokenGoogleControlResult = await tokenGoogleControl.json();
-            setMetaConnected(tokenMetaControlResult === 1);
-            setGoogleConnected(tokenGoogleControlResult === 1);
-        };
+        const controlMetaUrl = `${CONFIG.apiUrl}/Auth/meta-token-control`;
+        const tokenMetaControl = await fetch(controlMetaUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const tokenMetaControlResult = await tokenMetaControl.json();
+
+        const controlGoogleUrl = `${CONFIG.apiUrl}/Auth/google-token-control`;
+        const tokenGoogleControl = await fetch(controlGoogleUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const tokenGoogleControlResult = await tokenGoogleControl.json();
+        
+        setMetaConnected(tokenMetaControlResult === 1);
+        setGoogleConnected(tokenGoogleControlResult === 1);
+        
+        if (tokenGoogleControlResult === 1 && tokenMetaControlResult === 1) {
+          navigate('/account-setting');
+        }
+      };
 
       fetchData();
   }, []);

@@ -36,7 +36,7 @@ export function MetaYearly({ title, subheader, chart, sx, ...other }) {
           pl: 1,
           py: 2.5,
           pr: 2.5,
-          height: 364,
+          height: 408,
         }}
       />
     </Card>

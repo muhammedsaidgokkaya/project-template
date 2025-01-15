@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CONFIG } from 'src/global-config';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -56,6 +57,8 @@ const SelectWithCheckbox = ({ label, items, selectedItems, onChange, renderValue
 );
 
 export function AccountAppView() {
+  const navigate = useNavigate();
+
   const [sites, setSites] = useState([]);
   const [analyticsAccounts, setAnalyticsAccounts] = useState([]);
   const [businesses, setBusinesses] = useState([]);
@@ -76,6 +79,20 @@ export function AccountAppView() {
         fetchData(`${CONFIG.apiUrl}/Organization/account-count`, token),
       ]);
 
+      const controlUrl = `${CONFIG.apiUrl}/Auth/organization-control`;
+      const tokenControl = await fetch(controlUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const tokenControlResult = await tokenControl.json();
+
+      if (tokenControlResult === 1) {
+        navigate('/dashboard');
+      }
+      
       setSites(siteData?.[0]?.siteEntry || []);
       setAnalyticsAccounts(analyticsData?.[0]?.accountSummaries || []);
       setBusinesses(businessData?.[0]?.data || []);

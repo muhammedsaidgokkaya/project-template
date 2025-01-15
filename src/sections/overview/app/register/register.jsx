@@ -12,6 +12,9 @@ import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
 
 import { fData } from 'src/utils/format-number';
 
@@ -25,12 +28,12 @@ export const UpdateUserSchema = zod.object({
   orgAddress: zod.string().min(1, { message: 'Organizasyon Adresi zorunludur!' }),
   zipCode: zod
     .string()
-    .min(1, { message: 'Zip Kodu zorunludur!' })
-    .regex(/^\d+$/, { message: 'Zip Kodu sadece sayısal değerlerden oluşmalıdır!' }),
+    .min(1, { message: 'Posta Kodu zorunludur!' })
+    .regex(/^\d+$/, { message: 'Posta Kodu sadece sayısal değerlerden oluşmalıdır!' }),
   taskNumber: zod
     .string()
-    .min(1, { message: 'Vergi No zorunludur!' })
-    .regex(/^\d+$/, { message: 'Vergi No sadece sayısal değerlerden oluşmalıdır!' }),
+    .min(1, { message: 'Bu alan zorunludur!' })
+    .regex(/^\d+$/, { message: 'Bu alan sadece sayısal değerlerden oluşmalıdır!' }),
   firstName: zod.string().min(1, { message: 'Ad zorunludur!' }),
   lastName: zod.string().min(1, { message: 'Soyad zorunludur!' }),
   mail: zod
@@ -47,7 +50,7 @@ export const UpdateUserSchema = zod.object({
 // ----------------------------------------------------------------------
 
 export function RegisterAppView() {
-
+  const [accountType, setAccountType] = useState('individual');
   const [currentUser, setCurrentUser] = useState({
     name: '',
     orgAddress: '',
@@ -89,6 +92,7 @@ export function RegisterAppView() {
 
   const {
     handleSubmit,
+    setValue,
     formState: { isSubmitting },
   } = methods;
 
@@ -100,18 +104,8 @@ export function RegisterAppView() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: data.name,
-          orgAddress: data.orgAddress,
-          zipCode: data.zipCode,
-          taskNumber: data.taskNumber,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          mail: data.mail,
-          phone: data.phone,
-          title: data.title,
-          dateOfBirth: data.dateOfBirth,
-          address: data.address,
-          gender: data.gender
+          ...data,
+          accountType,
         })
       });
 
@@ -139,12 +133,28 @@ export function RegisterAppView() {
     }
   });
 
+  useEffect(() => {
+    setValue('identifier', '');
+  }, [accountType, setValue]);
+
   return (
       <Form methods={methods} onSubmit={onSubmit}>
         <Typography variant="h4" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
           Kayıt Ol
         </Typography>
         <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 12 }}>
+            <Card sx={{ p: 3 }}>
+              <RadioGroup
+                row
+                value={accountType}
+                onChange={(event) => setAccountType(event.target.value)}
+              >
+                <FormControlLabel value="individual" control={<Radio />} label="Bireysel" />
+                <FormControlLabel value="corporate" control={<Radio />} label="Kurumsal" />
+              </RadioGroup>
+            </Card>
+          </Grid>
           <Grid size={{ xs: 12, md: 12 }}>
             <Card sx={{ p: 3 }}>
               <Box
@@ -156,9 +166,9 @@ export function RegisterAppView() {
                 }}
               >
                 <Field.Text name="name" label="Organizasyon Adı" />
-                <Field.Text name="taskNumber" label="Vergi No" />
-                <Field.Text name="orgAddress" multiline rows={4} label="Adres" />
-                <Field.Text name="zipCode" label="Zip Kodu" />
+                <Field.Text name="taskNumber" label={accountType === 'individual' ? 'TCKN' : 'Vergi No'} />
+                <Field.Text name="orgAddress" multiline rows={4} label="Organizasyon Adresi" />
+                <Field.Text name="zipCode" label="Posta Kodu" />
               </Box>
             </Card>
           </Grid>

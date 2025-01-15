@@ -23,8 +23,8 @@ export const NewUserSchema = zod.object({
   orgAddress: zod.string().min(1, { message: 'Organizasyon Adresi zorunludur!' }),
   zipCode: zod
     .string()
-    .min(1, { message: 'Zip Kodu zorunludur!' })
-    .regex(/^\d+$/, { message: 'Zip Kodu sadece sayısal değerlerden oluşmalıdır!' }),
+    .min(1, { message: 'Posta Kodu zorunludur!' })
+    .regex(/^\d+$/, { message: 'Posta Kodu sadece sayısal değerlerden oluşmalıdır!' }),
   taskNumber: zod
     .string()
     .min(1, { message: 'Vergi No zorunludur!' })
