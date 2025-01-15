@@ -44,6 +44,7 @@ const ICONS = {
   report: icon('ic-report'),
   seo: icon('ic-seo'),
   tagret_group: icon('ic-target-group'),
+  soon: icon('ic-soon'),
 };
 
 // ----------------------------------------------------------------------
@@ -57,7 +58,16 @@ export const navData = [
     items: [
       { title: 'Başlangıç', path: paths.dashboard.root, icon: ICONS.dashboard },
       { title: 'Meta', path: paths.dashboard.general.ecommerce, icon: ICONS.meta },
-      { title: 'Google', path: paths.dashboard.general.banking, icon: ICONS.google_ads },
+      { title: 'Google', path: paths.dashboard.general.banking, icon: ICONS.google_ads, disabled: true, 
+        info: (
+          <Label
+            color="info"
+            variant="inverted"
+            startIcon={<Iconify icon="eva:clock-outline" />}
+          >
+            Yakında
+          </Label>
+        ) },
       { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
       { title: 'Search Console', path: paths.dashboard.general.search_console, icon: ICONS.search_console },
     ],
@@ -88,12 +98,66 @@ export const navData = [
           { title: 'Search Console', path: paths.dashboard.order.demo.details, icon: ICONS.search_console },
         ],
       },
-      { title: 'SEO', path: paths.dashboard.invoice.root, icon: ICONS.seo },
-      { title: 'Hedef Kitle', path: paths.dashboard.post.root, icon: ICONS.tagret_group },
-      { title: 'E-Posta', path: paths.dashboard.mail, icon: ICONS.mail },
-      { title: 'Sohbet', path: paths.dashboard.chat, icon: ICONS.chat },
-      { title: 'Takvim', path: paths.dashboard.calendar, icon: ICONS.calendar },
-      { title: 'Görevler', path: paths.dashboard.kanban, icon: ICONS.kanban },
+      { title: 'SEO', path: paths.dashboard.invoice.root, icon: ICONS.seo, disabled: true, 
+        info: (
+          <Label
+            color="info"
+            variant="inverted"
+            startIcon={<Iconify icon="eva:clock-outline" />}
+          >
+            Yakında
+          </Label>
+        ) },
+      { title: 'Hedef Kitle', path: paths.dashboard.post.root, icon: ICONS.tagret_group, disabled: true, 
+        info: (
+          <Label
+            color="info"
+            variant="inverted"
+            startIcon={<Iconify icon="eva:clock-outline" />}
+          >
+            Yakında
+          </Label>
+        ) },
+      { title: 'E-Posta', path: paths.dashboard.mail, icon: ICONS.mail, disabled: true, 
+        info: (
+          <Label
+            color="info"
+            variant="inverted"
+            startIcon={<Iconify icon="eva:clock-outline" />}
+          >
+            Yakında
+          </Label>
+        ) },
+      { title: 'Sohbet', path: paths.dashboard.chat, icon: ICONS.chat, disabled: true, 
+        info: (
+          <Label
+            color="info"
+            variant="inverted"
+            startIcon={<Iconify icon="eva:clock-outline" />}
+          >
+            Yakında
+          </Label>
+        ) },
+      { title: 'Takvim', path: paths.dashboard.calendar, icon: ICONS.calendar, disabled: true, 
+        info: (
+          <Label
+            color="info"
+            variant="inverted"
+            startIcon={<Iconify icon="eva:clock-outline" />}
+          >
+            Yakında
+          </Label>
+        ) },
+      { title: 'Görevler', path: paths.dashboard.kanban, icon: ICONS.kanban, disabled: true, 
+        info: (
+          <Label
+            color="info"
+            variant="inverted"
+            startIcon={<Iconify icon="eva:clock-outline" />}
+          >
+            Yakında
+          </Label>
+        ) },
     ],
   },
 ];

@@ -1,5 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import { m } from 'framer-motion';
 import { usePopover } from 'minimal-shared/hooks';
+import { CONFIG } from 'src/global-config';
 
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
@@ -9,17 +11,39 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 
-import { fToNow } from 'src/utils/format-time';
-
 import { Scrollbar } from 'src/components/scrollbar';
 import { CustomPopover } from 'src/components/custom-popover';
 import { varTap, varHover, transitionTap } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
-export function ContactsPopover({ data = [], sx, ...other }) {
+export function ContactsPopover({ sx, ...other }) {
   const { open, anchorEl, onClose, onOpen } = usePopover();
+  const [data, setData] = useState([]);
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem('jwtToken');
+        const url = `${CONFIG.apiUrl}/Organization/users`;
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            },
+        });
+    
+        const data = await response.json();
+        setData(data);
+      } catch (error) {
+      }
+    };
+
+    fetchUsers();
+  }, []);
+  
   const renderMenuList = () => (
     <CustomPopover
       open={open}
@@ -28,19 +52,25 @@ export function ContactsPopover({ data = [], sx, ...other }) {
       slotProps={{ arrow: { offset: 20 } }}
     >
       <Typography variant="h6" sx={{ p: 1.5 }}>
-        Contacts <span>({data.length})</span>
+        Kullanıcılar <span>({data.length})</span>
       </Typography>
 
       <Scrollbar sx={{ height: 320, width: 320 }}>
         {data.map((contact) => (
           <MenuItem key={contact.id} sx={{ p: 1 }}>
-            <Badge variant={contact.status}>
-              <Avatar alt={contact.name} src={contact.avatarUrl} />
+            <Badge>
+              <Avatar 
+                alt={contact.name} 
+                src={`/user/${contact.id}.png`} 
+                onError={(e) => (e.target.src = '/default-avatar.png')} 
+              >
+                {contact.name[0]?.toUpperCase()[0]}
+              </Avatar>
             </Badge>
 
             <ListItemText
               primary={contact.name}
-              secondary={contact.status === 'offline' ? fToNow(contact.lastActivity) : ''}
+              secondary={contact.mail}
               primaryTypographyProps={{ typography: 'subtitle2' }}
               secondaryTypographyProps={{ typography: 'caption', color: 'text.disabled' }}
             />
