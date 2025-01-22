@@ -105,7 +105,7 @@ export function SearchConsoleReportNew() {
         toast.success('Rapor başarıyla oluşturuldu.');
         setTimeout(() => {
             window.location.href = '/dashboard/report/search-console';
-        }, 1500);
+        }, 1000);
       } else {
         toast.error('Rapor oluşturulamadı.');
       }
@@ -218,6 +218,15 @@ export function SearchConsoleReportNew() {
                     </Box>
 
                     <Stack spacing={3} sx={{ mt: 3, alignItems: 'flex-end' }}>
+                        {isSubmitting && (
+                          <Typography 
+                            variant="body2" 
+                            color="warning.main" 
+                            sx={{ alignSelf: 'center', marginRight: 2 }}
+                          >
+                            Raporunuz oluşturuluyor... Lütfen rapor oluşturulana kadar bekleyiniz!
+                          </Typography>
+                        )}
                         <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                         Kaydet
                         </LoadingButton>
