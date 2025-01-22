@@ -85,6 +85,16 @@ export const paths = {
         new: `${ROOTS.DASHBOARD}/report/search-console/new`,
         view: (id) => `${ROOTS.DASHBOARD}/report/search-console/${id}/view`,
       },
+      analytics: {
+        root: `${ROOTS.DASHBOARD}/report/analytics`,
+        new: `${ROOTS.DASHBOARD}/report/analytics/new`,
+        view: (id) => `${ROOTS.DASHBOARD}/report/analytics/${id}/view`,
+      },
+      meta: {
+        root: `${ROOTS.DASHBOARD}/report/meta`,
+        new: `${ROOTS.DASHBOARD}/report/meta/new`,
+        view: (id) => `${ROOTS.DASHBOARD}/report/meta/${id}/view`,
+      },
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

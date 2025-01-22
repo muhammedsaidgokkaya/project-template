@@ -26,6 +26,12 @@ const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
 const SearchConsoleReport = lazy(() => import('src/pages/dashboard/report/searchconsole'));
 const SearchConsoleReportNew = lazy(() => import('src/pages/dashboard/report/searchconsole/new'));
 const SearchConsoleReportView = lazy(() => import('src/pages/dashboard/report/searchconsole/view'));
+const AnalyticsReport = lazy(() => import('src/pages/dashboard/report/analytics'));
+const AnalyticsReportNew = lazy(() => import('src/pages/dashboard/report/analytics/new'));
+const AnalyticsReportView = lazy(() => import('src/pages/dashboard/report/analytics/view'));
+const MetaReport = lazy(() => import('src/pages/dashboard/report/meta'));
+const MetaReportNew = lazy(() => import('src/pages/dashboard/report/meta/new'));
+const MetaReportView = lazy(() => import('src/pages/dashboard/report/meta/view'));
 // Order
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
@@ -112,6 +118,22 @@ export const dashboardRoutes = [
               { index: true, element: <SearchConsoleReport /> },
               { path: 'new', element: <SearchConsoleReportNew /> },
               { path: ':id/view', element: <SearchConsoleReportView /> },
+            ],
+          },
+          {
+            path: 'analytics',
+            children: [
+              { index: true, element: <AnalyticsReport /> },
+              { path: 'new', element: <AnalyticsReportNew /> },
+              { path: ':id/view', element: <AnalyticsReportView /> },
+            ],
+          },
+          {
+            path: 'meta',
+            children: [
+              { index: true, element: <MetaReport /> },
+              { path: 'new', element: <MetaReportNew /> },
+              { path: ':id/view', element: <MetaReportView /> },
             ],
           },
         ],

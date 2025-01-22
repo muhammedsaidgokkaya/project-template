@@ -92,9 +92,9 @@ export const navData = [
         path: paths.dashboard.report.root,
         icon: ICONS.report,
         children: [
-          { title: 'Meta', path: paths.dashboard.order.root, icon: ICONS.meta },
+          { title: 'Meta', path: paths.dashboard.report.meta.root, icon: ICONS.meta },
           { title: 'Google', path: paths.dashboard.order.demo.details, icon: ICONS.google_ads },
-          { title: 'Analytics', path: paths.dashboard.order.root, icon: ICONS.analytics },
+          { title: 'Analytics', path: paths.dashboard.report.analytics.root, icon: ICONS.analytics },
           { title: 'Search Console', path: paths.dashboard.report.search_console.root, icon: ICONS.search_console },
         ],
       },
