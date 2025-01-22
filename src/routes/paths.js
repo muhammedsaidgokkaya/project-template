@@ -78,6 +78,14 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
       },
     },
+    report: {
+      root: `${ROOTS.DASHBOARD}/report`,
+      search_console: {
+        root: `${ROOTS.DASHBOARD}/report/search-console`,
+        new: `${ROOTS.DASHBOARD}/report/search-console/new`,
+        view: (id) => `${ROOTS.DASHBOARD}/report/search-console/${id}/view`,
+      },
+    },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,
       new: `${ROOTS.DASHBOARD}/product/new`,

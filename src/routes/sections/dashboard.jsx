@@ -22,6 +22,10 @@ const ProductDetailsPage = lazy(() => import('src/pages/dashboard/product/detail
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
 const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
 const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
+// Report
+const SearchConsoleReport = lazy(() => import('src/pages/dashboard/report/searchconsole'));
+const SearchConsoleReportNew = lazy(() => import('src/pages/dashboard/report/searchconsole/new'));
+const SearchConsoleReportView = lazy(() => import('src/pages/dashboard/report/searchconsole/view'));
 // Order
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
@@ -98,6 +102,20 @@ export const dashboardRoutes = [
       { path: 'file', element: <OverviewFilePage /> },
       { path: 'search-console', element: <OverviewSearchConsolePage /> },
       { path: 'course', element: <OverviewCoursePage /> },
+      {
+        path: 'report',
+        children: [
+          { index: true, element: <SearchConsoleReport /> },
+          {
+            path: 'search-console',
+            children: [
+              { index: true, element: <SearchConsoleReport /> },
+              { path: 'new', element: <SearchConsoleReportNew /> },
+              { path: ':id/view', element: <SearchConsoleReportView /> },
+            ],
+          },
+        ],
+      },
       {
         path: 'user',
         children: [

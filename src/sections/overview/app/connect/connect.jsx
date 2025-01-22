@@ -28,6 +28,7 @@ export function ConnectAppView() {
   const [googleAppId, setGoogleAppId] = useState('');
   const redirectGoogleUri = CONFIG.googleUrl;
   const googleScopes = [
+    'https://www.googleapis.com/auth/analytics',
     'https://www.googleapis.com/auth/analytics.readonly',
     'https://www.googleapis.com/auth/analytics.manage.users.readonly',
     'https://www.googleapis.com/auth/webmasters',
