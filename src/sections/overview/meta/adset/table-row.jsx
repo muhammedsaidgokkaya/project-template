@@ -93,6 +93,13 @@ export function MetaTableRow({
     <>
       <TableRow hover selected={selected}>
         <TableCell>{row.name}</TableCell>
+        <TableCell>
+          {row.insights?.data?.[0]?.resultDouble ?? '—'}
+          <br />
+          <span style={{ opacity: 0.6, fontSize: '0.85em' }}>
+            {row.insights?.data?.[0]?.resultString ?? ''}
+          </span>
+        </TableCell>
         <TableCell>{row.bidStrategy}</TableCell>
         <TableCell>
           {row.dailyBudget === 0 ? '—' : 
@@ -122,6 +129,17 @@ export function MetaTableRow({
           {row.insights?.data?.[0]?.impressions 
             ? new Intl.NumberFormat('tr-TR').format(row.insights?.data?.[0]?.impressions) 
             : '—'}
+        </TableCell>
+        <TableCell>
+          {row.insights?.data?.[0]?.resultDouble ? (
+            <span style={{ textDecoration: 'underline' }}>
+              {new Intl.NumberFormat('tr-TR', { style: 'decimal', minimumFractionDigits: 2 }).format(
+                (row.insights?.data?.[0]?.spend ?? 0) / row.insights?.data?.[0]?.resultDouble
+              ) + ' TL'}
+            </span>
+          ) : (
+            <span style={{ textDecoration: 'underline' }}>—</span>
+          )}
         </TableCell>
         <TableCell>
           {new Intl.NumberFormat('tr-TR', { style: 'decimal', minimumFractionDigits: 2 }).format(row.insights?.data?.[0]?.cpc ?? 0.00)} TL

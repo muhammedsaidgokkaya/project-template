@@ -95,6 +95,13 @@ export function MetaTableRow({
         
         <TableCell>{row.name}</TableCell>
         <TableCell>
+          {row.insights?.data?.[0]?.resultDouble ?? '—'}
+          <br />
+          <span style={{ opacity: 0.6, fontSize: '0.85em' }}>
+            {row.insights?.data?.[0]?.resultString ?? ''}
+          </span>
+        </TableCell>
+        <TableCell>
           {row.insights?.data?.[0]?.reach 
             ? new Intl.NumberFormat('tr-TR').format(row.insights?.data?.[0]?.reach) 
             : '—'}
@@ -103,6 +110,17 @@ export function MetaTableRow({
           {row.insights?.data?.[0]?.impressions 
             ? new Intl.NumberFormat('tr-TR').format(row.insights?.data?.[0]?.impressions) 
             : '—'}
+        </TableCell>
+        <TableCell>
+          {row.insights?.data?.[0]?.resultDouble ? (
+            <span style={{ textDecoration: 'underline' }}>
+              {new Intl.NumberFormat('tr-TR', { style: 'decimal', minimumFractionDigits: 2 }).format(
+                (row.insights?.data?.[0]?.spend ?? 0) / row.insights?.data?.[0]?.resultDouble
+              ) + ' TL'}
+            </span>
+          ) : (
+            <span>—</span>
+          )}
         </TableCell>
         <TableCell>
           {new Intl.NumberFormat('tr-TR', { style: 'decimal', minimumFractionDigits: 2 }).format(row.insights?.data?.[0]?.cpc ?? 0.00)} TL

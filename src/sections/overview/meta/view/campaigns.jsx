@@ -50,8 +50,10 @@ import { TableFiltersResult } from '../table-filters-result';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Kampanya Adı' },
+  { id: 'resultDouble', label: 'Sonuçlar' },
   { id: 'reach', label: 'Erişim' },
   { id: 'impressions', label: 'Gösterim' },
+  { id: 'resultString', label: 'Sonuç Başına Ücret' },
   { id: 'cpc', label: 'Tıklama Başına Maliyet' },
   { id: 'cpm', label: 'Bin Gösterim Başına Maliyet' },
   { id: 'spend', label: 'Harcama' },

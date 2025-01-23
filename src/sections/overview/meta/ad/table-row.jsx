@@ -92,8 +92,19 @@ export function MetaTableRow({
   return (
     <>
       <TableRow hover selected={selected}>
-        
+        <TableCell><img 
+            src={row.img} 
+            alt={row.name} 
+            style={{ width: '40px', height: '40px', marginRight: '8px', borderRadius: '50%' }} 
+          /></TableCell>
         <TableCell>{row.name}</TableCell>
+        <TableCell>
+          {row.insights?.data?.[0]?.resultDouble ?? '—'}
+          <br />
+          <span style={{ opacity: 0.6, fontSize: '0.85em' }}>
+            {row.insights?.data?.[0]?.resultString ?? ''}
+          </span>
+        </TableCell>
         <TableCell>
           {row.insights?.data?.[0]?.reach 
             ? new Intl.NumberFormat('tr-TR').format(row.insights?.data?.[0]?.reach) 
@@ -103,6 +114,17 @@ export function MetaTableRow({
           {row.insights?.data?.[0]?.impressions 
             ? new Intl.NumberFormat('tr-TR').format(row.insights?.data?.[0]?.impressions) 
             : '—'}
+        </TableCell>
+        <TableCell>
+          {row.insights?.data?.[0]?.resultDouble ? (
+            <span style={{ textDecoration: 'underline' }}>
+              {new Intl.NumberFormat('tr-TR', { style: 'decimal', minimumFractionDigits: 2 }).format(
+                (row.insights?.data?.[0]?.spend ?? 0) / row.insights?.data?.[0]?.resultDouble
+              ) + ' TL'}
+            </span>
+          ) : (
+            <span style={{ textDecoration: 'underline' }}>—</span>
+          )}
         </TableCell>
         <TableCell>{row.insights?.data?.[0]?.qualityRanking ? row.insights?.data?.[0]?.qualityRanking : '—'}</TableCell>
         <TableCell>{row.insights?.data?.[0]?.engagementRateRanking ? row.insights?.data?.[0]?.engagementRateRanking : '—'}</TableCell>

@@ -49,9 +49,12 @@ import { TableToolbar } from '../table-toolbar';
 import { TableFiltersResult } from '../table-filters-result';
 
 const TABLE_HEAD = [
+  { id: '#', label: '' },
   { id: 'name', label: 'Reklam Adı' },
+  { id: 'resultDouble', label: 'Sonuçlar' },
   { id: 'reach', label: 'Erişim' },
   { id: 'impressions', label: 'Gösterim' },
+  { id: 'resultString', label: 'Sonuç Başına Ücret' },
   { id: 'qualityRanking', label: 'Kalite Sıralaması' },
   { id: 'engagementRateRanking', label: 'Etkileşim Oranı Sıralaması' },
   { id: 'conversionRateRanking', label: 'Dönüşüm Oranı Sıralaması' },

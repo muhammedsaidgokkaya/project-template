@@ -50,12 +50,14 @@ import { TableFiltersResult } from '../table-filters-result';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Reklam Seti Adı' },
+  { id: 'resultDouble', label: 'Sonuçlar' },
   { id: 'bidStrategy', label: 'Teklif Stratejisi' },
   { id: 'dailyBudget', label: 'Günlük Bütçe' },
   { id: 'lifeTimeBudget', label: 'Toplam Bütçe' },
   { id: 'updateTime', label: 'Son Düzenleme' },
   { id: 'reach', label: 'Erişim' },
   { id: 'impressions', label: 'Gösterim' },
+  { id: 'resultString', label: 'Sonuç Başına Ücret' },
   { id: 'spend', label: 'Harcanan Tutar' },
   { id: 'cpc', label: 'Tıklama Başına Maliyet' },
   { id: 'cpm', label: 'Bin Gösterim Başına Maliyet' },
