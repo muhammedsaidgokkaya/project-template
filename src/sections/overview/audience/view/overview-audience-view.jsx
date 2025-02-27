@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { paths } from 'src/routes/paths';
+import { RouterLink } from 'src/routes/components';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { EmptyContent } from 'src/components/empty-content';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import { Iconify } from 'src/components/iconify';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { AudienceList } from '../audience-list';
@@ -92,6 +95,11 @@ export function OverviewAudienceView() {
           { name: 'Başlangıç', href: paths.dashboard.root },
           { name: 'Hedef Kitle' },
         ]}
+        action={
+          <Button component={RouterLink} href={paths.dashboard.audience.new} variant="contained" startIcon={<Iconify icon="mingcute:add-line" />}>
+            Yeni Hedef Kitle
+          </Button>
+        }
         sx={{ mb: { xs: 3, md: 3 } }}
       />
       

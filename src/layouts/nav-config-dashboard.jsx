@@ -89,7 +89,16 @@ export const navData = [
           { title: 'Search Console', path: paths.dashboard.report.search_console.root, icon: ICONS.search_console },
         ],
       },
-      { title: 'Hedef Kitle', path: paths.dashboard.audience, icon: ICONS.tagret_group, },
+      { title: 'Hedef Kitle', path: paths.dashboard.audience.root, icon: ICONS.tagret_group, disabled: true, 
+        info: (
+          <Label
+            color="info"
+            variant="inverted"
+            startIcon={<Iconify icon="eva:clock-outline" />}
+          >
+            Yakında
+          </Label>
+        ) },
       { title: 'SEO', path: paths.dashboard.invoice.root, icon: ICONS.seo, disabled: true, 
         info: (
           <Label

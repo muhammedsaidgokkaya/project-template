@@ -17,7 +17,9 @@ const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
 const OverviewSearchConsolePage = lazy(() => import('src/pages/dashboard/search-console'));
 const OverviewFilePage = lazy(() => import('src/pages/dashboard/file'));
 const OverviewCoursePage = lazy(() => import('src/pages/dashboard/course'));
-const OverviewAudiencePage = lazy(() => import('src/pages/dashboard/audience'));
+//Audience
+const OverviewAudiencePage = lazy(() => import('src/pages/dashboard/audience/list'));
+const OverviewAudienceNew = lazy(() => import('src/pages/dashboard/audience/new'));
 // Product
 const ProductDetailsPage = lazy(() => import('src/pages/dashboard/product/details'));
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
@@ -109,7 +111,15 @@ export const dashboardRoutes = [
       { path: 'file', element: <OverviewFilePage /> },
       { path: 'search-console', element: <OverviewSearchConsolePage /> },
       { path: 'course', element: <OverviewCoursePage /> },
-      { path: 'audience', element: <OverviewAudiencePage /> },
+      {
+        path: 'audience',
+        children: [
+          { index: true, element: <OverviewAudiencePage /> },
+          { path: 'list', element: <OverviewAudiencePage /> },
+          { path: 'new', element: <OverviewAudienceNew /> },
+          { path: ':id/edit', element: <UserEditPage /> },
+        ],
+      },
       {
         path: 'report',
         children: [

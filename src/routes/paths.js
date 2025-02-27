@@ -56,7 +56,12 @@ export const paths = {
     calendar: `${ROOTS.DASHBOARD}/calendar`,
     fileManager: `${ROOTS.DASHBOARD}/file-manager`,
     permission: `${ROOTS.DASHBOARD}/permission`,
-    audience: `${ROOTS.DASHBOARD}/audience`,
+    audience: {
+      root: `${ROOTS.DASHBOARD}/audience`,
+      new: `${ROOTS.DASHBOARD}/audience/new`,
+      list: `${ROOTS.DASHBOARD}/audience/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/audience/${id}/edit`,
+    },
     general: {
       app: `${ROOTS.DASHBOARD}/app`,
       ecommerce: `${ROOTS.DASHBOARD}/meta`,

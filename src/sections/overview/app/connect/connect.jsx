@@ -33,6 +33,7 @@ export function ConnectAppView() {
     'https://www.googleapis.com/auth/analytics.manage.users.readonly',
     'https://www.googleapis.com/auth/webmasters',
     'https://www.googleapis.com/auth/webmasters.readonly',
+    'https://www.googleapis.com/auth/adwords',
   ].join(' ');
 
   useEffect(() => {

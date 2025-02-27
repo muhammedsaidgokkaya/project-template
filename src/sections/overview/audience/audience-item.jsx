@@ -4,6 +4,7 @@ import Card from '@mui/material/Card';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
 
 import { RouterLink } from 'src/routes/components';
 
@@ -27,6 +28,12 @@ export function AudienceItem({ job }) {
     <>
       <Card>
         <Box sx={{ p: 3, pb: 2 }}>
+          <Avatar
+            alt='Meta'
+            src='/assets/icons/home/meta.svg'
+            variant="rounded"
+            sx={{ width: 48, height: 48, mb: 1 }}
+          />
           <ListItemText
             sx={{ mb: 1 }}
             title={job.name}
