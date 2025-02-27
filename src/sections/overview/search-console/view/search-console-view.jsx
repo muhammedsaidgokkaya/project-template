@@ -125,7 +125,7 @@ export function OverviewSearchConsoleView() {
 
         <Grid size={{ xs: 12, md: 3 }}>
             <SearchConsoleWidgetSummary
-                title="Ortalama Konum"
+                title="Ortalama Konum Bilgisi"
                 percent={dashboardData.positionChange}
                 total={dashboardData.averagePosition}
                 icon={
