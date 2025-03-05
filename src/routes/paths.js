@@ -52,7 +52,7 @@ export const paths = {
     mail: `${ROOTS.DASHBOARD}/mail`,
     chat: `${ROOTS.DASHBOARD}/chat`,
     blank: `${ROOTS.DASHBOARD}/blank`,
-    kanban: `${ROOTS.DASHBOARD}/kanban`,
+    // kanban: `${ROOTS.DASHBOARD}/kanban`,
     calendar: `${ROOTS.DASHBOARD}/calendar`,
     fileManager: `${ROOTS.DASHBOARD}/file-manager`,
     permission: `${ROOTS.DASHBOARD}/permission`,
@@ -112,6 +112,12 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/product/${MOCK_ID}/edit`,
       },
     },
+    kanban: {
+      root: `${ROOTS.DASHBOARD}/kanban`,
+      new: `${ROOTS.DASHBOARD}/kanban/new`,
+      details: (id) => `${ROOTS.DASHBOARD}/kanban/${id}`,
+      edit: (id) => `${ROOTS.DASHBOARD}/kanban/${id}/edit`,
+    },
     invoice: {
       root: `${ROOTS.DASHBOARD}/invoice`,
       new: `${ROOTS.DASHBOARD}/invoice/new`,
@@ -147,16 +153,6 @@ export const paths = {
       demo: {
         details: `${ROOTS.DASHBOARD}/job/${MOCK_ID}`,
         edit: `${ROOTS.DASHBOARD}/job/${MOCK_ID}/edit`,
-      },
-    },
-    tour: {
-      root: `${ROOTS.DASHBOARD}/tour`,
-      new: `${ROOTS.DASHBOARD}/tour/new`,
-      details: (id) => `${ROOTS.DASHBOARD}/tour/${id}`,
-      edit: (id) => `${ROOTS.DASHBOARD}/tour/${id}/edit`,
-      demo: {
-        details: `${ROOTS.DASHBOARD}/tour/${MOCK_ID}`,
-        edit: `${ROOTS.DASHBOARD}/tour/${MOCK_ID}/edit`,
       },
     },
   },

@@ -27,22 +27,12 @@ export function TourList({ tours }) {
           <TourItem
             key={tour.id}
             tour={tour}
-            editHref={paths.dashboard.tour.edit(tour.id)}
-            detailsHref={paths.dashboard.tour.details(tour.id)}
+            editHref={paths.dashboard.kanban.edit(tour.id)}
+            detailsHref={paths.dashboard.kanban.details(tour.id)}
             onDelete={() => handleDelete(tour.id)}
           />
         ))}
       </Box>
-
-      {tours.length > 8 && (
-        <Pagination
-          count={8}
-          sx={{
-            mt: { xs: 5, md: 8 },
-            [`& .${paginationClasses.ul}`]: { justifyContent: 'center' },
-          }}
-        />
-      )}
     </>
   );
 }

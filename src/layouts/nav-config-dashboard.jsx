@@ -89,36 +89,36 @@ export const navData = [
           { title: 'Search Console', path: paths.dashboard.report.search_console.root, icon: ICONS.search_console },
         ],
       },
-      { title: 'Hedef Kitle', path: paths.dashboard.audience.root, icon: ICONS.tagret_group, disabled: true, 
-        info: (
-          <Label
-            color="info"
-            variant="inverted"
-            startIcon={<Iconify icon="eva:clock-outline" />}
-          >
-            Yakında
-          </Label>
-        ) },
-      { title: 'SEO', path: paths.dashboard.invoice.root, icon: ICONS.seo, disabled: true, 
-        info: (
-          <Label
-            color="info"
-            variant="inverted"
-            startIcon={<Iconify icon="eva:clock-outline" />}
-          >
-            Yakında
-          </Label>
-        ) },
-      { title: 'E-Posta', path: paths.dashboard.mail, icon: ICONS.mail, disabled: true, 
-        info: (
-          <Label
-            color="info"
-            variant="inverted"
-            startIcon={<Iconify icon="eva:clock-outline" />}
-          >
-            Yakında
-          </Label>
-        ) },
+      // { title: 'Hedef Kitle', path: paths.dashboard.audience.root, icon: ICONS.tagret_group, disabled: true, 
+      //   info: (
+      //     <Label
+      //       color="info"
+      //       variant="inverted"
+      //       startIcon={<Iconify icon="eva:clock-outline" />}
+      //     >
+      //       Yakında
+      //     </Label>
+      //   ) },
+      // { title: 'SEO', path: paths.dashboard.invoice.root, icon: ICONS.seo, disabled: true, 
+      //   info: (
+      //     <Label
+      //       color="info"
+      //       variant="inverted"
+      //       startIcon={<Iconify icon="eva:clock-outline" />}
+      //     >
+      //       Yakında
+      //     </Label>
+      //   ) },
+      // { title: 'E-Posta', path: paths.dashboard.mail, icon: ICONS.mail, disabled: true, 
+      //   info: (
+      //     <Label
+      //       color="info"
+      //       variant="inverted"
+      //       startIcon={<Iconify icon="eva:clock-outline" />}
+      //     >
+      //       Yakında
+      //     </Label>
+      //   ) },
       { title: 'Sohbet', path: paths.dashboard.chat, icon: ICONS.chat, disabled: true, 
         info: (
           <Label
@@ -139,16 +139,7 @@ export const navData = [
             Yakında
           </Label>
         ) },
-      { title: 'Görevler', path: paths.dashboard.kanban, icon: ICONS.kanban, disabled: true, 
-        info: (
-          <Label
-            color="info"
-            variant="inverted"
-            startIcon={<Iconify icon="eva:clock-outline" />}
-          >
-            Yakında
-          </Label>
-        ) },
+      { title: 'Görevler', path: paths.dashboard.kanban.root, icon: ICONS.kanban },
     ],
   },
 ];

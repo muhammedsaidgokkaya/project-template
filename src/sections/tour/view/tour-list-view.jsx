@@ -5,6 +5,8 @@ import { useBoolean, useSetState } from 'minimal-shared/hooks';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
@@ -30,6 +32,12 @@ export function TourListView() {
   const openFilters = useBoolean();
 
   const [sortBy, setSortBy] = useState('latest');
+
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const handleTabChange = (event, newIndex) => {
+    setTabIndex(newIndex);
+  };
 
   const filters = useSetState({
     destination: [],
@@ -71,7 +79,7 @@ export function TourListView() {
         flexDirection: { xs: 'column', sm: 'row' },
       }}
     >
-      <TourSearch redirectPath={(id) => paths.dashboard.tour.details(id)} />
+      <TourSearch redirectPath={(id) => paths.dashboard.kanban.details(id)} />
 
       <Box sx={{ gap: 1, flexShrink: 0, display: 'flex' }}>
         <TourFilters
@@ -99,28 +107,32 @@ export function TourListView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="List"
+        heading="Görevler"
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Tour', href: paths.dashboard.tour.root },
-          { name: 'List' },
+          { name: 'Başlangıç', href: paths.dashboard.root },
+          { name: 'Görevler' },
         ]}
         action={
           <Button
             component={RouterLink}
-            href={paths.dashboard.tour.new}
+            href={paths.dashboard.kanban.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New Tour
+            Yeni Görev
           </Button>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
-        {renderFilters()}
-        {canReset && renderResults()}
+        <Tabs value={tabIndex} onChange={handleTabChange} variant="fullWidth">
+          <Tab label="Tümü" />
+          <Tab label="Bekliyor" />
+          <Tab label="Devam Ediyor" />
+          <Tab label="Tamamlandı" />
+          <Tab label="İptal Edildi" />
+        </Tabs>
       </Stack>
 
       {notFound && <EmptyContent filled sx={{ py: 10 }} />}

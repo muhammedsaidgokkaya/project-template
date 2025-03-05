@@ -13,10 +13,10 @@ export function TourEditView({ tour }) {
     <DashboardContent>
       <CustomBreadcrumbs
         heading="Edit"
-        backHref={paths.dashboard.tour.root}
+        backHref={paths.dashboard.kanban.root}
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Tour', href: paths.dashboard.tour.root },
+          { name: 'Tour', href: paths.dashboard.kanban.root },
           { name: tour?.name },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

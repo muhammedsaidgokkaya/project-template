@@ -15,7 +15,7 @@ export function TourCreateView() {
         heading="Create a new tour"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Tour', href: paths.dashboard.tour.root },
+          { name: 'Tour', href: paths.dashboard.kanban.root },
           { name: 'New tour' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

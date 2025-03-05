@@ -28,8 +28,8 @@ export function TourDetailsView({ tour }) {
 
   const renderToolbar = () => (
     <TourDetailsToolbar
-      backHref={paths.dashboard.tour.root}
-      editHref={paths.dashboard.tour.edit(`${tour?.id}`)}
+      backHref={paths.dashboard.kanban.root}
+      editHref={paths.dashboard.kanban.edit(`${tour?.id}`)}
       liveHref="#"
       publish={publish || ''}
       onChangePublish={handleChangePublish}
