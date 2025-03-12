@@ -20,15 +20,11 @@ import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { TourList } from '../tour-list';
-import { TourSort } from '../tour-sort';
-import { TourSearch } from '../tour-search';
-import { TourFilters } from '../tour-filters';
-import { TourFiltersResult } from '../tour-filters-result';
+import { KanbanList } from '../kanban-list';
 
 // ----------------------------------------------------------------------
 
-export function TourListView() {
+export function KanbanListView() {
   const openFilters = useBoolean();
 
   const [sortBy, setSortBy] = useState('latest');
@@ -112,7 +108,7 @@ export function TourListView() {
 
       {notFound && <EmptyContent filled sx={{ py: 10 }} />}
 
-      <TourList tours={dataFiltered} />
+      <KanbanList tours={dataFiltered} />
     </DashboardContent>
   );
 }

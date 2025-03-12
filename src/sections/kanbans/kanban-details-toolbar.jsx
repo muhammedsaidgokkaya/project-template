@@ -15,7 +15,7 @@ import { CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export function TourDetailsToolbar({
+export function KanbanDetailsToolbar({
   sx,
   publish,
   backHref,

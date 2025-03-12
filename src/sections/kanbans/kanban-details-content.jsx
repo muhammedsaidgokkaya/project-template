@@ -24,7 +24,7 @@ import { useParams } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
-export function TourDetailsContent({ tour, initialServices = [] }) {
+export function KanbanDetailsContent({ tour, initialServices = [] }) {
   const slides = tour?.images.map((slide) => ({ src: slide })) || [];
   const [status, setStatus] = useState(0);
 

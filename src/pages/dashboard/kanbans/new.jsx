@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/global-config';
 
-import { TourCreateView } from 'src/sections/tour/view';
+import { KanbanCreateView } from 'src/sections/kanbans/view';
 
 // ----------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <TourCreateView />
+      <KanbanCreateView />
     </>
   );
 }

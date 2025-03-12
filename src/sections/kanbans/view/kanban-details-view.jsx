@@ -11,13 +11,12 @@ import { TOUR_DETAILS_TABS, TOUR_PUBLISH_OPTIONS } from 'src/_mock';
 
 import { Label } from 'src/components/label';
 
-import { TourDetailsContent } from '../tour-details-content';
-import { TourDetailsBookers } from '../tour-details-bookers';
-import { TourDetailsToolbar } from '../tour-details-toolbar';
+import { KanbanDetailsContent } from '../kanban-details-content';
+import { KanbanDetailsToolbar } from '../kanban-details-toolbar';
 
 // ----------------------------------------------------------------------
 
-export function TourDetailsView({ tour }) {
+export function KanbanDetailsView({ tour }) {
   const [publish, setPublish] = useState(tour?.publish);
 
   const tabs = useTabs('content');
@@ -27,7 +26,7 @@ export function TourDetailsView({ tour }) {
   }, []);
 
   const renderToolbar = () => (
-    <TourDetailsToolbar
+    <KanbanDetailsToolbar
       backHref={paths.dashboard.kanban.root}
       editHref={paths.dashboard.kanban.edit(`${tour?.id}`)}
       liveHref="#"
@@ -56,7 +55,7 @@ export function TourDetailsView({ tour }) {
   return (
     <DashboardContent>
       {renderToolbar()}
-      <TourDetailsContent tour={tour} />
+      <KanbanDetailsContent tour={tour} />
     </DashboardContent>
   );
 }

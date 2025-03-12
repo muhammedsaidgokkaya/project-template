@@ -2,11 +2,11 @@ import { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
 import { paths } from 'src/routes/paths';
-import { TourItem } from './tour-item';
+import { KanbanItem } from './kanban-item';
 
 // ----------------------------------------------------------------------
 
-export function TourList({ tours }) {
+export function KanbanList({ tours }) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 9;
   
@@ -31,7 +31,7 @@ export function TourList({ tours }) {
         }}
       >
         {currentTours.map((tour) => (
-          <TourItem
+          <KanbanItem
             key={tour.id}
             tour={tour}
             editHref={paths.dashboard.kanban.edit(tour.id)}

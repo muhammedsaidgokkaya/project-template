@@ -62,12 +62,12 @@ const JobDetailsPage = lazy(() => import('src/pages/dashboard/job/details'));
 const JobListPage = lazy(() => import('src/pages/dashboard/job/list'));
 const JobCreatePage = lazy(() => import('src/pages/dashboard/job/new'));
 const JobEditPage = lazy(() => import('src/pages/dashboard/job/edit'));
-// Tour
-const TourDetailsPage = lazy(() => import('src/pages/dashboard/tour/details'));
-const TourListPage = lazy(() => import('src/pages/dashboard/tour/list'));
-const TourCreatePage = lazy(() => import('src/pages/dashboard/tour/new'));
-const TourEditPage = lazy(() => import('src/pages/dashboard/tour/edit'));
-const TourSchemaPage = lazy(() => import('src/pages/dashboard/tour/schema'));
+// Kanban
+const KanbanDetailsPage = lazy(() => import('src/pages/dashboard/kanbans/details'));
+const KanbanListPage = lazy(() => import('src/pages/dashboard/kanbans/list'));
+const KanbanCreatePage = lazy(() => import('src/pages/dashboard/kanbans/new'));
+const KanbanEditPage = lazy(() => import('src/pages/dashboard/kanbans/edit'));
+const KanbanSchemaPage = lazy(() => import('src/pages/dashboard/kanbans/schema'));
 // File manager
 const FileManagerPage = lazy(() => import('src/pages/dashboard/file-manager'));
 // App
@@ -223,12 +223,12 @@ export const dashboardRoutes = [
       {
         path: 'kanban',
         children: [
-          { index: true, element: <TourListPage /> },
-          { path: 'list', element: <TourListPage /> },
-          { path: ':id', element: <TourDetailsPage /> },
-          { path: 'new', element: <TourCreatePage /> },
-          { path: 'schema', element: <TourSchemaPage /> },
-          { path: ':id/edit', element: <TourEditPage /> },
+          { index: true, element: <KanbanListPage /> },
+          { path: 'list', element: <KanbanListPage /> },
+          { path: ':id', element: <KanbanDetailsPage /> },
+          { path: 'new', element: <KanbanCreatePage /> },
+          { path: 'schema', element: <KanbanSchemaPage /> },
+          { path: ':id/edit', element: <KanbanEditPage /> },
         ],
       },
       // { path: 'kanban', element: <KanbanPage /> },

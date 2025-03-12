@@ -67,7 +67,7 @@ export const NewTourSchema = zod
 
 // ----------------------------------------------------------------------
 
-export function TourNewEditForm({ currentTour }) {
+export function KanbanNewEditForm({ currentTour }) {
   const router = useRouter();
 
   const defaultValues = {

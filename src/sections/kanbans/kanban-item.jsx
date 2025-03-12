@@ -23,7 +23,7 @@ import { CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export function TourItem({ tour, editHref, detailsHref, onDelete }) {
+export function KanbanItem({ tour, editHref, detailsHref, onDelete }) {
   const menuActions = usePopover();
   const [status, setStatus] = useState(0); // Başlangıç durumu
 

@@ -2,11 +2,11 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/global-config';
 
-import { KanbanSchemaView } from 'src/sections/tour/view';
+import { KanbanListView } from 'src/sections/kanbans/view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Görev Şeması Oluştur - ${CONFIG.appName}` };
+const metadata = { title: `Görevler - ${CONFIG.appName}` };
 
 export default function Page() {
   return (
@@ -15,7 +15,7 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <KanbanSchemaView />
+      <KanbanListView />
     </>
   );
 }
