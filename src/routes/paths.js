@@ -115,6 +115,7 @@ export const paths = {
     kanban: {
       root: `${ROOTS.DASHBOARD}/kanban`,
       new: `${ROOTS.DASHBOARD}/kanban/new`,
+      schema: `${ROOTS.DASHBOARD}/kanban/schema`,
       details: (id) => `${ROOTS.DASHBOARD}/kanban/${id}`,
       edit: (id) => `${ROOTS.DASHBOARD}/kanban/${id}/edit`,
     },

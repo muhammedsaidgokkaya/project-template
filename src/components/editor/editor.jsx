@@ -34,7 +34,7 @@ export const Editor = forwardRef((props, ref) => {
     editable = true,
     fullItem = false,
     value: content = '',
-    placeholder = 'Write something awesome...',
+    placeholder = 'Bir şeyler yaz...',
     ...other
   } = props;
 

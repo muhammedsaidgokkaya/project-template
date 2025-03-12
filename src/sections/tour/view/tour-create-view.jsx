@@ -12,11 +12,11 @@ export function TourCreateView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new tour"
+        heading="Görev Oluştur"
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Tour', href: paths.dashboard.kanban.root },
-          { name: 'New tour' },
+          { name: 'Başlangıç', href: paths.dashboard.root },
+          { name: 'Görevler', href: paths.dashboard.kanban.root },
+          { name: 'Görev Oluştur' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

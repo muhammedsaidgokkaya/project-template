@@ -1,15 +1,22 @@
-import { useCallback } from 'react';
-
+import { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
-
 import { paths } from 'src/routes/paths';
-
 import { TourItem } from './tour-item';
 
 // ----------------------------------------------------------------------
 
 export function TourList({ tours }) {
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 9;
+  
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const startIndex = (page - 1) * itemsPerPage;
+  const currentTours = tours.slice(startIndex, startIndex + itemsPerPage);
+
   const handleDelete = useCallback((id) => {
     console.info('DELETE', id);
   }, []);
@@ -23,7 +30,7 @@ export function TourList({ tours }) {
           gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
         }}
       >
-        {tours.map((tour) => (
+        {currentTours.map((tour) => (
           <TourItem
             key={tour.id}
             tour={tour}
@@ -33,6 +40,18 @@ export function TourList({ tours }) {
           />
         ))}
       </Box>
+
+      {tours.length > itemsPerPage && (
+        <Pagination
+          count={Math.ceil(tours.length / itemsPerPage)} // Toplam sayfa sayısı
+          page={page}
+          onChange={handlePageChange}
+          sx={{
+            mt: { xs: 5, md: 8 },
+            [`& .${paginationClasses.ul}`]: { justifyContent: 'center' },
+          }}
+        />
+      )}
     </>
   );
 }

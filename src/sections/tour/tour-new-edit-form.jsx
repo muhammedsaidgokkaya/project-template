@@ -128,32 +128,20 @@ export function TourNewEditForm({ currentTour }) {
 
   const renderDetails = () => (
     <Card>
-      <CardHeader title="Details" subheader="Title, short description, image..." sx={{ mb: 3 }} />
-
-      <Divider />
-
       <Stack spacing={3} sx={{ p: 3 }}>
         <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Name</Typography>
-          <Field.Text name="name" placeholder="Ex: Adventure Seekers Expedition..." />
+          <Field.Text name="name" placeholder="Görev Adı" />
         </Stack>
 
         <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Content</Typography>
+          <Typography variant="subtitle2">Açıklama</Typography>
           <Field.Editor name="content" sx={{ maxHeight: 480 }} />
         </Stack>
 
         <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Images</Typography>
-          <Field.Upload
-            multiple
-            thumbnail
-            name="images"
-            maxSize={3145728}
-            onRemove={handleRemoveFile}
-            onRemoveAll={handleRemoveAllFiles}
-            onUpload={() => console.info('ON UPLOAD')}
-          />
+          <Box sx={{ gap: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+            <Field.DatePicker name="available.endDate" label="Bitiş Tarihi" />
+          </Box>
         </Stack>
       </Stack>
     </Card>
@@ -162,23 +150,52 @@ export function TourNewEditForm({ currentTour }) {
   const renderProperties = () => (
     <Card>
       <CardHeader
-        title="Properties"
-        subheader="Additional functions and attributes..."
+        title="Ayarlar"
+        subheader="Şema oluşturma ve kullanıcıya görev atama"
         sx={{ mb: 3 }}
       />
 
       <Divider />
 
       <Stack spacing={3} sx={{ p: 3 }}>
+      <Stack spacing={1.5}>
+          <Typography variant="subtitle2">Departman</Typography>
+          <Field.Autocomplete
+            name="tags"
+            placeholder="+ Departman"
+            multiple
+            freeSolo
+            disableCloseOnSelect
+            options={_tags.map((option) => option)}
+            getOptionLabel={(option) => option}
+            renderOption={(props, option) => (
+              <li {...props} key={option}>
+                {option}
+              </li>
+            )}
+            renderTags={(selected, getTagProps) =>
+              selected.map((option, index) => (
+                <Chip
+                  {...getTagProps({ index })}
+                  key={option}
+                  label={option}
+                  size="small"
+                  color="info"
+                  variant="soft"
+                />
+              ))
+            }
+          />
+        </Stack>
         <div>
           <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
-            Tour guide
+            Ekip
           </Typography>
 
           <Field.Autocomplete
             multiple
             name="tourGuides"
-            placeholder="+ Tour Guides"
+            placeholder="+ Kullanıcılar"
             disableCloseOnSelect
             options={_tourGuides}
             getOptionLabel={(option) => option.name}
@@ -215,60 +232,12 @@ export function TourNewEditForm({ currentTour }) {
           />
         </div>
 
-        <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Available</Typography>
-          <Box sx={{ gap: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
-            <Field.DatePicker name="available.startDate" label="Start date" />
-            <Field.DatePicker name="available.endDate" label="End date" />
-          </Box>
-        </Stack>
-
-        <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Duration</Typography>
-          <Field.Text name="durations" placeholder="Ex: 2 days, 4 days 3 nights..." />
-        </Stack>
-
-        <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Destination</Typography>
-          <Field.CountrySelect fullWidth name="destination" placeholder="+ Destination" />
-        </Stack>
-
         <Stack spacing={1}>
-          <Typography variant="subtitle2">Services</Typography>
+          <Typography variant="subtitle2">Anahtar Kelime</Typography>
           <Field.MultiCheckbox
             name="services"
             options={TOUR_SERVICE_OPTIONS}
             sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}
-          />
-        </Stack>
-
-        <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Tags</Typography>
-          <Field.Autocomplete
-            name="tags"
-            placeholder="+ Tags"
-            multiple
-            freeSolo
-            disableCloseOnSelect
-            options={_tags.map((option) => option)}
-            getOptionLabel={(option) => option}
-            renderOption={(props, option) => (
-              <li {...props} key={option}>
-                {option}
-              </li>
-            )}
-            renderTags={(selected, getTagProps) =>
-              selected.map((option, index) => (
-                <Chip
-                  {...getTagProps({ index })}
-                  key={option}
-                  label={option}
-                  size="small"
-                  color="info"
-                  variant="soft"
-                />
-              ))
-            }
           />
         </Stack>
       </Stack>
@@ -277,12 +246,7 @@ export function TourNewEditForm({ currentTour }) {
 
   const renderActions = () => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-      <FormControlLabel
-        label="Publish"
-        control={<Switch defaultChecked inputProps={{ id: 'publish-switch' }} />}
-        sx={{ flexGrow: 1, pl: 3 }}
-      />
-
+      <Box sx={{ flexGrow: 1, pl: 3 }}></Box>
       <LoadingButton
         type="submit"
         variant="contained"
@@ -290,14 +254,14 @@ export function TourNewEditForm({ currentTour }) {
         loading={isSubmitting}
         sx={{ ml: 2 }}
       >
-        {!currentTour ? 'Create tour' : 'Save changes'}
+        {!currentTour ? 'Görevi oluştur' : 'Kaydet'}
       </LoadingButton>
     </Box>
   );
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
-      <Stack spacing={{ xs: 3, md: 5 }} sx={{ mx: 'auto', maxWidth: { xs: 720, xl: 880 } }}>
+      <Stack spacing={{ xs: 3, md: 5 }} sx={{ mx: 'auto', ml: 5, mr: 5 }}>
         {renderDetails()}
         {renderProperties()}
         {renderActions()}

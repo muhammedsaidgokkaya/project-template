@@ -4,25 +4,24 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { TourNewEditForm } from '../tour-new-edit-form';
+import { SchemaEditForm } from '../schema-create';
 
 // ----------------------------------------------------------------------
 
-export function TourEditView({ tour }) {
+export function KanbanSchemaView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Görev Düzenle"
-        backHref={paths.dashboard.kanban.root}
+        heading="Görev Şeması Oluştur"
         links={[
           { name: 'Başlangıç', href: paths.dashboard.root },
           { name: 'Görevler', href: paths.dashboard.kanban.root },
-          { name: tour?.name },
+          { name: 'Görev Şeması Oluştur' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <TourNewEditForm currentTour={tour} />
+      <SchemaEditForm />
     </DashboardContent>
   );
 }

@@ -69,41 +69,6 @@ export function TourListView() {
     setSortBy(newValue);
   }, []);
 
-  const renderFilters = () => (
-    <Box
-      sx={{
-        gap: 3,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: { xs: 'flex-end', sm: 'center' },
-        flexDirection: { xs: 'column', sm: 'row' },
-      }}
-    >
-      <TourSearch redirectPath={(id) => paths.dashboard.kanban.details(id)} />
-
-      <Box sx={{ gap: 1, flexShrink: 0, display: 'flex' }}>
-        <TourFilters
-          filters={filters}
-          canReset={canReset}
-          dateError={dateError}
-          open={openFilters.value}
-          onOpen={openFilters.onTrue}
-          onClose={openFilters.onFalse}
-          options={{
-            tourGuides: _tourGuides,
-            services: TOUR_SERVICE_OPTIONS.map((option) => option.label),
-          }}
-        />
-
-        <TourSort sort={sortBy} onSort={handleSortBy} sortOptions={TOUR_SORT_OPTIONS} />
-      </Box>
-    </Box>
-  );
-
-  const renderResults = () => (
-    <TourFiltersResult filters={filters} totalResults={dataFiltered.length} />
-  );
-
   return (
     <DashboardContent>
       <CustomBreadcrumbs
@@ -113,14 +78,24 @@ export function TourListView() {
           { name: 'Görevler' },
         ]}
         action={
-          <Button
-            component={RouterLink}
-            href={paths.dashboard.kanban.new}
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-          >
-            Yeni Görev
-          </Button>
+          <>
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.kanban.schema}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              Görev Şeması Oluştur
+            </Button>
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.kanban.new}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              Yeni Görev
+            </Button>
+          </>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
@@ -145,45 +120,5 @@ export function TourListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, filters, sortBy, dateError }) {
-  const { services, destination, startDate, endDate, tourGuides } = filters;
-
-  const tourGuideIds = tourGuides.map((tourGuide) => tourGuide.id);
-
-  // Sort by
-  if (sortBy === 'latest') {
-    inputData = orderBy(inputData, ['createdAt'], ['desc']);
-  }
-
-  if (sortBy === 'oldest') {
-    inputData = orderBy(inputData, ['createdAt'], ['asc']);
-  }
-
-  if (sortBy === 'popular') {
-    inputData = orderBy(inputData, ['totalViews'], ['desc']);
-  }
-
-  // Filters
-  if (destination.length) {
-    inputData = inputData.filter((tour) => destination.includes(tour.destination));
-  }
-
-  if (tourGuideIds.length) {
-    inputData = inputData.filter((tour) =>
-      tour.tourGuides.some((filterItem) => tourGuideIds.includes(filterItem.id))
-    );
-  }
-
-  if (services.length) {
-    inputData = inputData.filter((tour) => tour.services.some((item) => services.includes(item)));
-  }
-
-  if (!dateError) {
-    if (startDate && endDate) {
-      inputData = inputData.filter((tour) =>
-        fIsBetween(startDate, tour.available.startDate, tour.available.endDate)
-      );
-    }
-  }
-
   return inputData;
 }

@@ -58,7 +58,16 @@ export const navData = [
     items: [
       { title: 'Başlangıç', path: paths.dashboard.root, icon: ICONS.dashboard },
       { title: 'Meta', path: paths.dashboard.general.ecommerce, icon: ICONS.meta },
-      { title: 'Google', path: paths.dashboard.general.banking, icon: ICONS.google_ads, },
+      { title: 'Google', path: paths.dashboard.general.banking, icon: ICONS.google_ads, disabled: true, 
+        info: (
+          <Label
+            color="info"
+            variant="inverted"
+            startIcon={<Iconify icon="eva:clock-outline" />}
+          >
+            Yakında
+          </Label>
+        ) },
       { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
       { title: 'Search Console', path: paths.dashboard.general.search_console, icon: ICONS.search_console },
     ],
@@ -84,7 +93,16 @@ export const navData = [
         icon: ICONS.report,
         children: [
           { title: 'Meta', path: paths.dashboard.report.meta.root, icon: ICONS.meta },
-          { title: 'Google', path: paths.dashboard.order.demo.details, icon: ICONS.google_ads },
+          { title: 'Google', path: paths.dashboard.order.demo.details, icon: ICONS.google_ads, disabled: true, 
+            info: (
+              <Label
+                color="info"
+                variant="inverted"
+                startIcon={<Iconify icon="eva:clock-outline" />}
+              >
+                Yakında
+              </Label>
+            ) },
           { title: 'Analytics', path: paths.dashboard.report.analytics.root, icon: ICONS.analytics },
           { title: 'Search Console', path: paths.dashboard.report.search_console.root, icon: ICONS.search_console },
         ],

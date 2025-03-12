@@ -56,10 +56,7 @@ export function TourDetailsView({ tour }) {
   return (
     <DashboardContent>
       {renderToolbar()}
-
-      {renderTabs()}
-      {tabs.value === 'content' && <TourDetailsContent tour={tour} />}
-      {tabs.value === 'bookers' && <TourDetailsBookers bookers={tour?.bookers} />}
+      <TourDetailsContent tour={tour} />
     </DashboardContent>
   );
 }

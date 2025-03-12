@@ -67,6 +67,7 @@ const TourDetailsPage = lazy(() => import('src/pages/dashboard/tour/details'));
 const TourListPage = lazy(() => import('src/pages/dashboard/tour/list'));
 const TourCreatePage = lazy(() => import('src/pages/dashboard/tour/new'));
 const TourEditPage = lazy(() => import('src/pages/dashboard/tour/edit'));
+const TourSchemaPage = lazy(() => import('src/pages/dashboard/tour/schema'));
 // File manager
 const FileManagerPage = lazy(() => import('src/pages/dashboard/file-manager'));
 // App
@@ -226,6 +227,7 @@ export const dashboardRoutes = [
           { path: 'list', element: <TourListPage /> },
           { path: ':id', element: <TourDetailsPage /> },
           { path: 'new', element: <TourCreatePage /> },
+          { path: 'schema', element: <TourSchemaPage /> },
           { path: ':id/edit', element: <TourEditPage /> },
         ],
       },

@@ -9,13 +9,12 @@ import { TourDetailsView } from 'src/sections/tour/view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Tour details | Dashboard - ${CONFIG.appName}` };
-
 export default function Page() {
   const { id = '' } = useParams();
 
   const currentTour = _tours.find((tour) => tour.id === id);
 
+  const metadata = { title: `${currentTour.name} - ${CONFIG.appName}` };
   return (
     <>
       <Helmet>

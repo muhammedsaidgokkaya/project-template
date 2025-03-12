@@ -64,10 +64,10 @@ export function TourDetailsToolbar({
           href={backHref}
           startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
         >
-          Back
+          Geri
         </Button>
 
-        <Box sx={{ flexGrow: 1 }} />
+        {/* <Box sx={{ flexGrow: 1 }} />
 
         {publish === 'published' && (
           <Tooltip title="Go Live">
@@ -93,10 +93,10 @@ export function TourDetailsToolbar({
           sx={{ textTransform: 'capitalize' }}
         >
           {publish}
-        </LoadingButton>
+        </LoadingButton> */}
       </Box>
-
-      {renderMenuActions()}
+{/* 
+      {renderMenuActions()} */}
     </>
   );
 }
