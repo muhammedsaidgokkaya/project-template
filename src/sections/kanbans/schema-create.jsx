@@ -3,6 +3,7 @@ import { z as zod } from 'zod';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { CONFIG } from 'src/global-config';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
@@ -17,12 +18,12 @@ import { Form } from 'src/components/hook-form';
 import { Iconify } from 'src/components/iconify';
 
 export const NewTourSchema = zod.object({
-  names: zod.array(zod.string().min(1, { message: 'Name is required!' })).min(1, { message: 'At least one name is required!' }),
+  name: zod.array(zod.string().min(1, { message: 'Name is required!' })).min(1, { message: 'At least one name is required!' }),
 });
 
-export function SchemaEditForm({ currentTour }) {
+export function SchemaEditForm({ currentSchema }) {
   const defaultValues = {
-    names: currentTour?.names ?? ['Deneme', 'deneme 2'], // Eğer currentTour varsa onun names değerini al, yoksa boş başlat
+    name: currentSchema ?? [],
   };
 
   const methods = useForm({
@@ -40,23 +41,38 @@ export function SchemaEditForm({ currentTour }) {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'names',
+    name: 'name',
   });
 
   useEffect(() => {
-    if (currentTour) {
-      reset({ names: currentTour.names });
+    if (currentSchema) {
+      reset({ name: [...currentSchema] });
     }
-  }, [currentTour, reset]);
+  }, [currentSchema, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      toast.success(currentTour ? 'Update success!' : 'Create success!');
-      console.info('DATA', data);
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Task/add-schema`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name,
+        })
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error submitting form data');
+      }
+      toast.success("Şema başarıyla güncellendi!");
+      setTimeout(() => {
+        window.location.href = '/dashboard/kanban/schema';
+      }, 2000);
     } catch (error) {
-      console.error(error);
+      toast.error('An error occurred while submitting the form');
     }
   });
 
@@ -70,7 +86,7 @@ export function SchemaEditForm({ currentTour }) {
               <Box key={item.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <TextField
                   fullWidth
-                  {...methods.register(`names.${index}`)}
+                  {...methods.register(`name.${index}`)}
                   label={`Anahtar Kelime ${index + 1}`}
                   variant="outlined"
                 />
@@ -87,7 +103,7 @@ export function SchemaEditForm({ currentTour }) {
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
-            {currentTour ? 'Kaydet' : 'Kaydet'}
+            {currentSchema ? 'Kaydet' : 'Kaydet'}
           </LoadingButton>
         </Box>
       </Stack>
