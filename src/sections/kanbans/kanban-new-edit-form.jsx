@@ -32,11 +32,11 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 export const NewTourSchema = zod
   .object({
-    name: zod.string().min(1, { message: 'Name is required!' }),
+    name: zod.string().min(1, { message: 'Görev adı zorunludur!' }),
     content: schemaHelper
       .editor()
-      .min(1, { message: 'Content must be at least 100 characters' }),
-    durations: schemaHelper.date({ message: { required: 'End date is required!' } }),
+      .min(1, { message: 'Açıklama alanı zorunludur!' }),
+    durations: schemaHelper.date({ message: { required: 'Bitiş süresi belirleyiniz!' } }),
   });
 
 // ----------------------------------------------------------------------
@@ -49,6 +49,34 @@ export function KanbanNewEditForm({ currentTour }) {
   const [loading, setLoading] = useState(false);
   const [tourServiceOptions, setTourServiceOptions] = useState([]);
   const [selectedServiceOptions, setSelectedServiceOptions] = useState([]);
+  const [departmentsError, setDepartmentsError] = useState('');
+  const [usersError, setUsersError] = useState('');
+  const [servicesError, setServicesError] = useState('');
+
+  const validateDepartments = () => {
+    if (selectedDepartments.length < 1) {
+      setDepartmentsError('En az bir departman seçmeniz gerekiyor!');
+      return false;
+    }
+    setDepartmentsError('');
+    return true;
+  };
+  const validateUsers = () => {
+    if (selectedUsers.length < 1) {
+      setUsersError('En az bir kullanıcı seçmeniz gerekiyor!');
+      return false;
+    }
+    setUsersError('');
+    return true;
+  };
+  const validateServices = () => {
+    if (selectedServiceOptions.length < 1) {
+      setServicesError('En az bir anahtar kelime seçmeniz gerekiyor!');
+      return false;
+    }
+    setServicesError('');
+    return true;
+  };
 
   useEffect(() => {
     fetchDepartments();
@@ -156,6 +184,10 @@ export function KanbanNewEditForm({ currentTour }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {  
+      const isDepartmentsValid = validateDepartments();
+      const isUsersValid = validateUsers();
+      const isServicesValid = validateServices();
+      if (!isDepartmentsValid || !isUsersValid || !isServicesValid) return;
       const response = await fetch(`${CONFIG.apiUrl}/Task/add-task`, {
         method: "POST",
         headers: {
@@ -206,7 +238,7 @@ export function KanbanNewEditForm({ currentTour }) {
         </Stack>
 
         <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Açıklama</Typography>
+          <Typography variant="subtitle2">İçerik</Typography>
           <Field.Editor name="content" sx={{ maxHeight: 480 }} />
         </Stack>
 
@@ -242,7 +274,7 @@ export function KanbanNewEditForm({ currentTour }) {
               setSelectedDepartments(newValue);
               setSelectedUsers([]);
             }}
-            renderInput={(params) => <TextField {...params} label="+ Departman Seçiniz" variant="outlined" />}
+            renderInput={(params) => <TextField {...params} label="+ Departman Seçiniz" variant="outlined" error={!!departmentsError} helperText={departmentsError} />}
             sx={{ mt: 1 }}
           />
         </Stack>
@@ -260,7 +292,7 @@ export function KanbanNewEditForm({ currentTour }) {
               getOptionLabel={(option) => option.name}
               value={selectedUsers}
               onChange={(event, newValue) => setSelectedUsers(newValue)}
-              renderInput={(params) => <TextField {...params} label="+ Kullanıcı Seçiniz" variant="outlined" />}
+              renderInput={(params) => <TextField {...params} label="+ Kullanıcı Seçiniz" variant="outlined" error={!!usersError} helperText={usersError} />}
               sx={{ mt: 1 }}
             />
           )}
@@ -277,7 +309,7 @@ export function KanbanNewEditForm({ currentTour }) {
             onChange={(event, newValue) => {
               setSelectedServiceOptions(newValue);
             }}
-            renderInput={(params) => <TextField {...params} label="+ Anahtar Kelime Seçiniz" variant="outlined" />}
+            renderInput={(params) => <TextField {...params} label="+ Anahtar Kelime Seçiniz" variant="outlined" error={!!servicesError} helperText={servicesError} />}
             sx={{ mt: 1 }}
           />
         </Stack>

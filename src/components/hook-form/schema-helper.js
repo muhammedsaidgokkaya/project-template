@@ -54,7 +54,7 @@ export const schemaHelper = {
    * defaultValue === '' | <p></p>
    * Apply for editor
    */
-  editor: (props) => zod.string().min(8, { message: props?.message ?? 'Content is required!' }),
+  editor: (props) => zod.string().min(8, { message: props?.message ?? 'İçerik alanı zorunludur!' }),
   /**
    * Nullable Input
    * Apply for input, select... with null value.
