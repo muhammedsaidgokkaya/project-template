@@ -70,7 +70,7 @@ export function SchemaEditForm({ currentSchema }) {
       toast.success("Şema başarıyla güncellendi!");
       setTimeout(() => {
         window.location.href = '/dashboard/kanban/schema';
-      }, 2000);
+      }, 1000);
     } catch (error) {
       toast.error('An error occurred while submitting the form');
     }

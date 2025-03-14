@@ -15,7 +15,7 @@ export function KanbanSchemaView() {
     const fetchSchemas = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        const response = await fetch(`${CONFIG.apiUrl}/Task/schema`, {
+        const response = await fetch(`${CONFIG.apiUrl}/Task/schemas`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

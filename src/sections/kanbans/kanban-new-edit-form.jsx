@@ -1,8 +1,11 @@
+import { useState, useEffect } from 'react';
 import { z as zod } from 'zod';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { Autocomplete, TextField, CircularProgress, List, ListItem, ListItemText } from "@mui/material";
+import { CONFIG } from 'src/global-config';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
@@ -32,57 +35,106 @@ export const NewTourSchema = zod
     name: zod.string().min(1, { message: 'Name is required!' }),
     content: schemaHelper
       .editor()
-      .min(100, { message: 'Content must be at least 100 characters' })
-      .max(500, { message: 'Content must be less than 500 characters' }),
-    images: schemaHelper.files({ message: 'Images is required!' }),
-    tourGuides: zod
-      .array(
-        zod.object({
-          id: zod.string(),
-          name: zod.string(),
-          avatarUrl: zod.string(),
-          phoneNumber: zod.string(),
-        })
-      )
-      .min(1, { message: 'Must have at least 1 guide!' }),
-    available: zod.object({
-      startDate: schemaHelper.date({ message: { required: 'Start date is required!' } }),
-      endDate: schemaHelper.date({ message: { required: 'End date is required!' } }),
-    }),
-    durations: zod.string().min(1, { message: 'Durations is required!' }),
-    destination: schemaHelper.nullableInput(
-      zod.string().min(1, { message: 'Destination is required!' }),
-      {
-        // message for null value
-        message: 'Destination is required!',
-      }
-    ),
-    services: zod.string().array().min(2, { message: 'Must have at least 2 items!' }),
-    tags: zod.string().array().min(2, { message: 'Must have at least 2 items!' }),
-  })
-  .refine((data) => !fIsAfter(data.available.startDate, data.available.endDate), {
-    message: 'End date cannot be earlier than start date!',
-    path: ['available.endDate'],
+      .min(1, { message: 'Content must be at least 100 characters' }),
+    durations: schemaHelper.date({ message: { required: 'End date is required!' } }),
   });
 
 // ----------------------------------------------------------------------
 
 export function KanbanNewEditForm({ currentTour }) {
+  const [departments, setDepartments] = useState([]);
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [tourServiceOptions, setTourServiceOptions] = useState([]);
+  const [selectedServiceOptions, setSelectedServiceOptions] = useState([]);
+
+  useEffect(() => {
+    fetchDepartments();
+    fetchUsers();
+    fetchSchemas();
+  }, []);
+
+  useEffect(() => {
+    fetchUsers(selectedDepartments);
+  }, [selectedDepartments]);
+
+  const fetchDepartments = async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Organization/departments`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setDepartments(data);
+    } catch (error) {
+      console.error("Departmanları çekerken hata oluştu", error);
+    }
+  };
+
+  const fetchUsers = async (departmentFilter = []) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("jwtToken");
+      let url = new URL(`${CONFIG.apiUrl}/Organization/users`);
+  
+      if (departmentFilter.length > 0) {
+        url = new URL(`${CONFIG.apiUrl}/Organization/department-users`);
+        
+        departmentFilter.forEach(dep => {
+          if (dep) {
+            url.searchParams.append("department", dep);
+          }
+        });
+      }
+  
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+  
+      const data = await response.json();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Kullanıcıları çekerken hata oluştu", error);
+      setUsers([]);
+    }
+    setLoading(false);
+  };
+  
+  const fetchSchemas = async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Task/schemas`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setTourServiceOptions(data);
+    } catch (error) {
+      console.error("şem alar çekerken hata oluştu", error);
+    }
+  };
+
   const router = useRouter();
 
   const defaultValues = {
     name: '',
     content: '',
-    images: [],
-    tourGuides: [],
-    available: {
-      startDate: null,
-      endDate: null,
-    },
-    durations: '',
-    destination: '',
+    durations: null,
+    departments: [],
+    users: [],
     services: [],
-    tags: [],
   };
 
   const methods = useForm({
@@ -103,14 +155,34 @@ export function KanbanNewEditForm({ currentTour }) {
   const values = watch();
 
   const onSubmit = handleSubmit(async (data) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      toast.success(currentTour ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.kanban.root);
-      console.info('DATA', data);
+    try {  
+      const response = await fetch(`${CONFIG.apiUrl}/Task/add-task`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name,
+          content: data.content,
+          durations: data.durations,
+          departments: selectedDepartments,
+          users: selectedUsers.map(user => user.id),
+          services: selectedServiceOptions.map(service => service.id),
+        })
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        toast.success(currentTour ? 'Update success!' : 'Görev başarıyla oluşturuldu!');
+        router.push(paths.dashboard.kanban.root);
+      } else {
+        toast.error(result.message || 'Something went wrong');
+      }
     } catch (error) {
       console.error(error);
+      toast.error('Error submitting data');
     }
   });
 
@@ -140,7 +212,7 @@ export function KanbanNewEditForm({ currentTour }) {
 
         <Stack spacing={1.5}>
           <Box sx={{ gap: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
-            <Field.DatePicker name="available.endDate" label="Bitiş Tarihi" />
+            <Field.DatePicker name="durations" label="Bitiş Tarihi" />
           </Box>
         </Stack>
       </Stack>
@@ -158,86 +230,55 @@ export function KanbanNewEditForm({ currentTour }) {
       <Divider />
 
       <Stack spacing={3} sx={{ p: 3 }}>
-      <Stack spacing={1.5}>
+        <Stack spacing={1.5}>
           <Typography variant="subtitle2">Departman</Typography>
-          <Field.Autocomplete
-            name="tags"
-            placeholder="+ Departman"
+          <Autocomplete
+            name="departments"
             multiple
-            freeSolo
-            disableCloseOnSelect
-            options={_tags.map((option) => option)}
+            options={departments}
             getOptionLabel={(option) => option}
-            renderOption={(props, option) => (
-              <li {...props} key={option}>
-                {option}
-              </li>
-            )}
-            renderTags={(selected, getTagProps) =>
-              selected.map((option, index) => (
-                <Chip
-                  {...getTagProps({ index })}
-                  key={option}
-                  label={option}
-                  size="small"
-                  color="info"
-                  variant="soft"
-                />
-              ))
-            }
+            value={selectedDepartments}
+            onChange={(event, newValue) => {
+              setSelectedDepartments(newValue);
+              setSelectedUsers([]);
+            }}
+            renderInput={(params) => <TextField {...params} label="+ Departman Seçiniz" variant="outlined" />}
+            sx={{ mt: 1 }}
           />
         </Stack>
-        <div>
-          <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
+        <Stack spacing={1.5}>
+          <Typography variant="subtitle2">
             Ekip
           </Typography>
-
-          <Field.Autocomplete
-            multiple
-            name="tourGuides"
-            placeholder="+ Kullanıcılar"
-            disableCloseOnSelect
-            options={_tourGuides}
-            getOptionLabel={(option) => option.name}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderOption={(props, tourGuide) => (
-              <li {...props} key={tourGuide.id}>
-                <Avatar
-                  key={tourGuide.id}
-                  alt={tourGuide.avatarUrl}
-                  src={tourGuide.avatarUrl}
-                  sx={{
-                    mr: 1,
-                    width: 24,
-                    height: 24,
-                    flexShrink: 0,
-                  }}
-                />
-
-                {tourGuide.name}
-              </li>
-            )}
-            renderTags={(selected, getTagProps) =>
-              selected.map((tourGuide, index) => (
-                <Chip
-                  {...getTagProps({ index })}
-                  key={tourGuide.id}
-                  size="small"
-                  variant="soft"
-                  label={tourGuide.name}
-                  avatar={<Avatar alt={tourGuide.name} src={tourGuide.avatarUrl} />}
-                />
-              ))
-            }
-          />
-        </div>
+          {loading ? (
+            <CircularProgress sx={{ display: "block", mx: "auto", mt: 2 }} />
+          ) : (
+            <Autocomplete
+              name="users"
+              multiple
+              options={users}
+              getOptionLabel={(option) => option.name}
+              value={selectedUsers}
+              onChange={(event, newValue) => setSelectedUsers(newValue)}
+              renderInput={(params) => <TextField {...params} label="+ Kullanıcı Seçiniz" variant="outlined" />}
+              sx={{ mt: 1 }}
+            />
+          )}
+        </Stack>
 
         <Stack spacing={1}>
           <Typography variant="subtitle2">Anahtar Kelime</Typography>
-          <Field.MultiCheckbox
+          <Autocomplete
             name="services"
-            options={TOUR_SERVICE_OPTIONS}
-            sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}
+            multiple
+            options={tourServiceOptions}
+            getOptionLabel={(option) => option.name}
+            value={selectedServiceOptions}
+            onChange={(event, newValue) => {
+              setSelectedServiceOptions(newValue);
+            }}
+            renderInput={(params) => <TextField {...params} label="+ Anahtar Kelime Seçiniz" variant="outlined" />}
+            sx={{ mt: 1 }}
           />
         </Stack>
       </Stack>
