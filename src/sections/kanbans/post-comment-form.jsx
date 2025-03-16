@@ -6,7 +6,8 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-import { Iconify } from 'src/components/iconify';
+import { toast } from 'src/components/snackbar';
+import { CONFIG } from 'src/global-config';
 import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
@@ -17,7 +18,7 @@ export const CommentSchema = zod.object({
 
 // ----------------------------------------------------------------------
 
-export function PostCommentForm() {
+export function PostCommentForm( {id} ) {
   const defaultValues = {
     comment: '',
   };
@@ -35,11 +36,25 @@ export function PostCommentForm() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      console.info('DATA', data);
+      const response = await fetch(`${CONFIG.apiUrl}/Task/add-task-comment?taskId=${id}&comment=${data.comment}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Yorum eklenirken hata oluştu!");
+      }
+  
+      const result = await response.json();
+      toast.success("Yorum başarıyla eklendi!");
+      setTimeout(() => {
+        window.location.href = `/dashboard/kanban/${id}`;
+      }, 1000);
     } catch (error) {
-      console.error(error);
+      console.error("Hata:", error);
     }
   });
 

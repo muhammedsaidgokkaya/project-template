@@ -1,22 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-
+import { paths } from 'src/routes/paths';
+import { CONFIG } from 'src/global-config';
 import { MenuItem, Select } from "@mui/material";
+import { BackLink } from './back-link';
 
-import { fDate } from 'src/utils/format-time';
+const fDate = (dateString) => {
+  return new Intl.DateTimeFormat("tr-TR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(dateString));
+};
 
-import { TOUR_SERVICE_OPTIONS } from 'src/_mock';
-
-import { Image } from 'src/components/image';
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Markdown } from 'src/components/markdown';
-import { Lightbox, useLightBox } from 'src/components/lightbox';
 import { PostCommentList } from './post-comment-list';
 import { PostCommentForm } from './post-comment-form';
 import { useGetPost } from 'src/actions/blog';
@@ -25,26 +28,85 @@ import { useParams } from 'src/routes/hooks';
 // ----------------------------------------------------------------------
 
 export function KanbanDetailsContent({ tour, initialServices = [] }) {
-  const slides = tour?.images.map((slide) => ({ src: slide })) || [];
-  const [status, setStatus] = useState(0);
+  const [status, setStatus] = useState(tour.state);
+  const [tourServiceOptions, setTourServiceOptions] = useState([]);
+  const [userServiceOptions, setUserServiceOptions] = useState([]);
 
   const { title = '' } = useParams();
-  const { post, postLoading, postError } = useGetPost(title);
-  const handleChange = (event) => {
-    setStatus(event.target.value);
-  };
-  const {
-    selected: selectedImage,
-    open: openLightbox,
-    onOpen: handleOpenLightbox,
-    onClose: handleCloseLightbox,
-  } = useLightBox(slides);
+  const { post } = useGetPost(title);
+  
+  useEffect(() => {
+    fetchSchemas();
+    fetchUsers();
+  }, []);
 
-  const daysPassed = Math.floor((new Date() - new Date(tour.createdAt)) / (1000 * 60 * 60 * 24));
+  const fetchSchemas = async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Task/task-schemas?taskId=${tour.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setTourServiceOptions(data);
+    } catch (error) {
+      console.error("şemalar çekerken hata oluştu", error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Task/task-users?taskId=${tour.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setUserServiceOptions(data);
+    } catch (error) {
+      console.error("kullanıcılar çekerken hata oluştu", error);
+    }
+  };
+  
+  const handleStatusChange = async (event, taskId) => {
+    const newStatus = event.target.value;
+    setStatus(newStatus);
+  
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Task/update-task-state?taskId=${taskId}&state=${newStatus}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Görev durumu güncellenemedi!");
+      }
+  
+      const result = await response.json();
+      toast.success('Görev durumu güncellendi!');
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (error) {
+      console.error("Hata:", error.message);
+    }
+  };
+
+  const daysPassed = Math.floor((new Date() - new Date(tour.createdDate)) / (1000 * 60 * 60 * 24));
 
   const daysText = daysPassed === 0 ? "Bugün" : `${daysPassed} gün önce`;
 
-  const endDate = new Date(tour.available.endDate);
+  const endDate = new Date(tour.duration);
   const today = new Date();
   const timeDiff = endDate - today;
   const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
@@ -62,29 +124,15 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
     <>
       <Box sx={{ mb: 3, display: 'flex' }}>
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          {tour?.name}
+          <BackLink href={paths.dashboard.kanban.root} />
+          {tour?.name} <span style={{ fontSize: '0.5em', color: 'gray' }}>{tour?.department}</span>
         </Typography>
-
-        {/* <IconButton>
-          <Iconify icon="solar:share-bold" />
-        </IconButton> */}
-        <Select
-          value={status}
-          onChange={handleChange}
-          sx={{ minWidth: 200, maxHeight: 50 }}
-        >
+        <Select value={status} onChange={(event) => handleStatusChange(event, tour.id)} displayEmpty sx={{ maxHeight: 40 }}>
           <MenuItem value="0">Bekliyor</MenuItem>
           <MenuItem value="1">Devam Ediyor</MenuItem>
           <MenuItem value="2">Tamamlandı</MenuItem>
           <MenuItem value="3">İptal</MenuItem>
         </Select>
-        {/* <Checkbox
-          defaultChecked
-          color="error"
-          icon={<Iconify icon="solar:heart-outline" />}
-          checkedIcon={<Iconify icon="solar:heart-bold" />}
-          inputProps={{ id: 'favorite-checkbox', 'aria-label': 'Favorite checkbox' }}
-        /> */}
       </Box>
 
       <Box
@@ -105,7 +153,10 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
         >
           <Iconify icon="fluent:status-12-regular" sx={{ color: 'error.main' }} />
           <Box component="span" sx={{ typography: 'subtitle2' }}>
-            Bekliyor
+            {tour.state === 0 ? 'Bekliyor' : 
+            tour.state === 1 ? 'Devam Ediyor' : 
+            tour.state === 2 ? 'Tamamlandı' : 
+            tour.state === 3 ? 'İptal' : ''}
           </Box>
         </Box>
 
@@ -118,7 +169,7 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
           }}
         >
           <Iconify icon="flat-color-icons:manager" sx={{ color: 'error.main' }} />
-          {tour?.destination} ekledi
+          {tour?.createdUser} ekledi
         </Box>
         <Box
           sx={{
@@ -129,7 +180,7 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
           }}
         >
           <Iconify icon="solar:clock-circle-bold" sx={{ color: 'info.main' }} />
-          {fDate(tour.createdAt)} ({daysText})
+          {fDate(tour.createdDate)} ({daysText})
         </Box>
         <Box
           sx={{
@@ -140,7 +191,7 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
           }}
         >
           <Iconify icon="solar:clock-circle-bold" sx={{ color: 'warning.main' }} />
-          {fDate(tour.available.endDate)} ({daysEndText})
+          {fDate(tour.duration)} ({daysEndText})
         </Box>
       </Box>
     </>
@@ -183,14 +234,33 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
     </Box>
   );
 
-  const [selectedServices, setSelectedServices] = useState(initialServices);
+  const [selectedServices, setSelectedServices] = useState([]);
 
-  const handleToggle = (label) => {
-    setSelectedServices((prev) =>
-      prev.includes(label) ? prev.filter((item) => item !== label) : [...prev, label]
+  const handleToggle = async (service) => {
+    const newSelectedServices = selectedServices.includes(service.id)
+      ? selectedServices.filter(id => id !== service.id)
+      : [...selectedServices, service.id];
+  
+    setSelectedServices(newSelectedServices);
+  
+    setTourServiceOptions(prevOptions =>
+      prevOptions.map(item =>
+        item.id === service.id ? { ...item, isFinished: !item.isFinished } : item
+      )
+    );
+
+    const response = await fetch(
+      `${CONFIG.apiUrl}/Task/update-task-template-task?taskTemplateTaskId=${service.id}`, 
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
+        },
+      }
     );
   };
-
+  
   const renderContent = () => (
     <>
       <Markdown children={tour?.content} />
@@ -209,29 +279,29 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
             gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
           }}
         >
-          {TOUR_SERVICE_OPTIONS.map((service) => {
-          const checked = selectedServices.includes(service.label);
+          {tourServiceOptions.map((service) => {
+            const checked = selectedServices.includes(service.id);
 
-          return (
-            <Box
-              key={service.label}
-              sx={{
-                gap: 1,
-                display: 'flex',
-                alignItems: 'center',
-                color: checked ? 'text.disabled' : 'inherit',
-              }}
-            >
-              <Checkbox
-                checked={checked}
-                onChange={() => handleToggle(service.label)}
-                icon={<Iconify icon="eva:checkmark-circle-2-outline" sx={{ color: 'primary.main' }} />}
-                checkedIcon={<Iconify icon="eva:checkmark-circle-2-outline" sx={{ color: 'text.disabled' }} />}
-              />
-              {service.label}
-            </Box>
-          );
-        })}
+            return (
+              <Box
+                key={service.id}
+                sx={{
+                  gap: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: service.isFinished ? 'inherit' : 'text.disabled',
+                }}
+              >
+                <Checkbox
+                  checked={checked}
+                  onChange={() => handleToggle(service)}
+                  icon={<Iconify icon="eva:checkmark-circle-2-outline" sx={{ color: service.isFinished ? 'primary.main' : 'text.disabled' }} />}
+                  checkedIcon={<Iconify icon="eva:checkmark-circle-2-outline" sx={{ color: service.isFinished ? 'primary.main' : 'text.disabled' }} />}
+                />
+                {service.name}
+              </Box>
+            );
+          })}
         </Box>
       </Box>
       
@@ -249,7 +319,7 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
             gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
           }}
         >
-          {TOUR_SERVICE_OPTIONS.map((service) => (
+          {userServiceOptions.map((service) => (
             <Box
               key={service.label}
               sx={{
@@ -258,7 +328,7 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
                 alignItems: 'center',
               }}
             >
-              {service.label}
+              {service.label} <span style={{ fontSize: '0.7em', color: 'gray' }}>{service.title}</span>
             </Box>
           ))}
         </Box>
@@ -268,28 +338,24 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
 
   const renderComment = () => (
     <>
-      <PostCommentForm />
+      <PostCommentForm id={tour.id} />
 
       <Divider sx={{ mt: 5, mb: 2 }} />
 
-      <PostCommentList comments={post?.comments ?? []} />
+      <PostCommentList taskId={tour.id} />
     </>
   );
 
   return (
     <>
-      
       <Box
         sx={{
+          mt: 3,
           maxWidth: 900,
           mx: 'auto',
         }}
       >
         {renderHead()}
-{/* 
-        <Divider sx={{ borderStyle: 'dashed', my: 5 }} />
-
-        {renderOverview()} */}
 
         <Divider sx={{ borderStyle: 'dashed', mt: 4, mb: 2 }} />
 

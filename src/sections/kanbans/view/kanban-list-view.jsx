@@ -1,5 +1,6 @@
 import { orderBy } from 'es-toolkit';
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { CONFIG } from 'src/global-config';
 import { useBoolean, useSetState } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
@@ -25,45 +26,62 @@ import { KanbanList } from '../kanban-list';
 // ----------------------------------------------------------------------
 
 export function KanbanListView() {
-  const openFilters = useBoolean();
+  const [tasks, setTasks] = useState([]);
+  const [tabIndex, setTabIndex] = useState(-1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [sortBy, setSortBy] = useState('latest');
+  useEffect(() => {
+    async function fetchTasks() {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        const response = await fetch(`${CONFIG.apiUrl}/Task/tasks`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          }
+        });
+        const data = await response.json();
+        setTasks(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTasks();
+  }, []);
 
-  const [tabIndex, setTabIndex] = useState(0);
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const tabFromHash = parseInt(hash.replace('#', ''), 10);
+      if (!isNaN(tabFromHash)) {
+        setTabIndex(tabFromHash);
+      }
+    }
+  }, []);
 
   const handleTabChange = (event, newIndex) => {
     setTabIndex(newIndex);
+    window.location.hash = `#${newIndex}`;
   };
 
-  const filters = useSetState({
-    destination: [],
-    tourGuides: [],
-    services: [],
-    startDate: null,
-    endDate: null,
+  const filteredTasks = tasks.filter((task) => {
+    switch (tabIndex) {
+      case 0:
+        return task.state === 0;
+      case 1:
+        return task.state === 1;
+      case 2:
+        return task.state === 2;
+      case 3:
+        return task.state === 3;
+      default:
+        return true;
+    }
   });
-  const { state: currentFilters } = filters;
-
-  const dateError = fIsAfter(currentFilters.startDate, currentFilters.endDate);
-
-  const dataFiltered = applyFilter({
-    inputData: _tours,
-    filters: currentFilters,
-    sortBy,
-    dateError,
-  });
-
-  const canReset =
-    currentFilters.destination.length > 0 ||
-    currentFilters.tourGuides.length > 0 ||
-    currentFilters.services.length > 0 ||
-    (!!currentFilters.startDate && !!currentFilters.endDate);
-
-  const notFound = !dataFiltered.length && canReset;
-
-  const handleSortBy = useCallback((newValue) => {
-    setSortBy(newValue);
-  }, []);
 
   return (
     <DashboardContent>
@@ -98,23 +116,21 @@ export function KanbanListView() {
 
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         <Tabs value={tabIndex} onChange={handleTabChange} variant="fullWidth">
-          <Tab label="Tümü" />
-          <Tab label="Bekliyor" />
-          <Tab label="Devam Ediyor" />
-          <Tab label="Tamamlandı" />
-          <Tab label="İptal Edildi" />
+          <Tab label="Tümü" value={-1} />
+          <Tab label="Bekliyor" value={0} />
+          <Tab label="Devam Ediyor" value={1} />
+          <Tab label="Tamamlandı" value={2} />
+          <Tab label="İptal Edildi" value={3} />
         </Tabs>
       </Stack>
 
-      {notFound && <EmptyContent filled sx={{ py: 10 }} />}
-
-      <KanbanList tours={dataFiltered} />
+      {loading ? (
+        <p>Veriler yükleniyor...</p>
+      ) : error ? (
+        <p>Hata: {error}</p>
+      ) : (
+        <KanbanList tours={filteredTasks} />
+      )}
     </DashboardContent>
   );
-}
-
-// ----------------------------------------------------------------------
-
-function applyFilter({ inputData, filters, sortBy, dateError }) {
-  return inputData;
 }

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { usePopover } from 'minimal-shared/hooks';
 
+import { CONFIG } from 'src/global-config';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
@@ -15,9 +16,15 @@ import { Select, FormControl } from '@mui/material';
 import { RouterLink } from 'src/routes/components';
 
 import { fCurrency } from 'src/utils/format-number';
-import { fDate, fDateTime, fDateRangeShortLabel } from 'src/utils/format-time';
+const fDate = (dateString) => {
+  return new Intl.DateTimeFormat("tr-TR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(dateString));
+};
 
-import { Image } from 'src/components/image';
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { CustomPopover } from 'src/components/custom-popover';
 
@@ -25,64 +32,45 @@ import { CustomPopover } from 'src/components/custom-popover';
 
 export function KanbanItem({ tour, editHref, detailsHref, onDelete }) {
   const menuActions = usePopover();
-  const [status, setStatus] = useState(0); // Başlangıç durumu
+  const [status, setStatus] = useState(tour.state);
 
-  const handleStatusChange = (event) => {
+  const handleStatusChange = async (event, taskId) => {
     const newStatus = event.target.value;
     setStatus(newStatus);
+  
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${CONFIG.apiUrl}/Task/update-task-state?taskId=${taskId}&state=${newStatus}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Görev durumu güncellenemedi!");
+      }
+  
+      const result = await response.json();
+      toast.success('Görev durumu güncellendi!');
+      setTimeout(() => {
+        window.location.href = `/dashboard/kanban#${newStatus}`;
+        window.location.reload();
+      }, 200);
+    } catch (error) {
+      console.error("Hata:", error.message);
+    }
   };
-  const renderRating = () => (
-    <Box
-      sx={{
-        top: 8,
-        right: 8,
-        zIndex: 9,
-        display: 'flex',
-        borderRadius: 1,
-        alignItems: 'center',
-        position: 'absolute',
-        p: '2px 6px 2px 4px',
-        typography: 'subtitle2',
-        bgcolor: 'warning.lighter',
-      }}
-    >
-      <Iconify icon="eva:star-fill" sx={{ color: 'warning.main', mr: 0.25 }} /> {tour.ratingNumber}
-    </Box>
-  );
-
-  const renderPrice = () => (
-    <Box
-      sx={{
-        top: 8,
-        left: 8,
-        zIndex: 9,
-        display: 'flex',
-        borderRadius: 1,
-        bgcolor: 'grey.800',
-        alignItems: 'center',
-        position: 'absolute',
-        p: '2px 6px 2px 4px',
-        color: 'common.white',
-        typography: 'subtitle2',
-      }}
-    >
-      {!!tour.priceSale && (
-        <Box component="span" sx={{ color: 'grey.500', mr: 0.25, textDecoration: 'line-through' }}>
-          {fCurrency(tour.priceSale)}
-        </Box>
-      )}
-      {fCurrency(tour.price)}
-    </Box>
-  );
-
-  const daysPassed = Math.floor((new Date() - new Date(tour.createdAt)) / (1000 * 60 * 60 * 24));
+  
+  const daysPassed = Math.floor((new Date() - new Date(tour.createdDate)) / (1000 * 60 * 60 * 24));
 
   const daysText = daysPassed === 0 ? "Bugün" : `${daysPassed} gün önce`;
 
   const renderTexts = () => (
     <ListItemText
       sx={[(theme) => ({ p: theme.spacing(2.5, 2.5, 2, 2.5) })]}
-      primary={`Oluşturma tarihi: ${fDate(tour.createdAt)} (${daysText})`}
+      primary={`Oluşturma tarihi: ${fDate(tour.createdDate)} (${daysText})`}
       secondary={
         <Link component={RouterLink} href={detailsHref} color="inherit">
          {tour.name}
@@ -99,7 +87,7 @@ export function KanbanItem({ tour, editHref, detailsHref, onDelete }) {
     />
   );
 
-  const endDate = new Date(tour.available.endDate);
+  const endDate = new Date(tour.duration);
   const today = new Date();
   const timeDiff = endDate - today;
   const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
@@ -130,7 +118,7 @@ export function KanbanItem({ tour, editHref, detailsHref, onDelete }) {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Iconify icon="fluent:status-12-regular" sx={{ color: 'error.main' }} />
           <FormControl size="small">
-            <Select value={status} onChange={handleStatusChange} displayEmpty>
+            <Select value={status} onChange={(event) => handleStatusChange(event, tour.id)} displayEmpty>
               <MenuItem value="0">Bekliyor</MenuItem>
               <MenuItem value="1">Devam Ediyor</MenuItem>
               <MenuItem value="2">Tamamlandı</MenuItem>
@@ -141,15 +129,15 @@ export function KanbanItem({ tour, editHref, detailsHref, onDelete }) {
       {[
         {
           icon: <Iconify icon="flat-color-icons:manager" sx={{ color: 'error.main' }} />,
-          label: tour.destination + ' ekledi',
+          label: tour.createdUser + ' ekledi',
         },
         {
           icon: <Iconify icon="solar:clock-circle-bold" sx={{ color: 'info.main' }} />,
-          label: `${fDate(tour.available.endDate)} (${daysEndText})`,
+          label: `${fDate(tour.duration)} (${daysEndText})`,
         },
         {
           icon: <Iconify icon="solar:users-group-rounded-bold" sx={{ color: 'primary.main' }} />,
-          label: `${tour.bookers.length} Kişi`,
+          label: `${tour.team} Kişi`,
         },
       ].map((item) => (
         <Box

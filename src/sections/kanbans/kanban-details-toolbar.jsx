@@ -27,32 +27,6 @@ export function KanbanDetailsToolbar({
 }) {
   const menuActions = usePopover();
 
-  const renderMenuActions = () => (
-    <CustomPopover
-      open={menuActions.open}
-      anchorEl={menuActions.anchorEl}
-      onClose={menuActions.onClose}
-      slotProps={{ arrow: { placement: 'top-right' } }}
-    >
-      <MenuList>
-        {publishOptions.map((option) => (
-          <MenuItem
-            key={option.value}
-            selected={option.value === publish}
-            onClick={() => {
-              menuActions.onClose();
-              onChangePublish(option.value);
-            }}
-          >
-            {option.value === 'published' && <Iconify icon="eva:cloud-upload-fill" />}
-            {option.value === 'draft' && <Iconify icon="solar:file-text-bold" />}
-            {option.label}
-          </MenuItem>
-        ))}
-      </MenuList>
-    </CustomPopover>
-  );
-
   return (
     <>
       <Box

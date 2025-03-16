@@ -7,7 +7,13 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 
-import { fDate } from 'src/utils/format-time';
+const fDate = (dateString) => {
+  return new Intl.DateTimeFormat("tr-TR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(dateString));
+};
 
 import { Iconify } from 'src/components/iconify';
 import { Markdown } from 'src/components/markdown';

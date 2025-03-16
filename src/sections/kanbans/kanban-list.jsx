@@ -6,7 +6,7 @@ import { KanbanItem } from './kanban-item';
 
 // ----------------------------------------------------------------------
 
-export function KanbanList({ tours }) {
+export function KanbanList({ tours = [] }) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 9;
   
@@ -43,7 +43,7 @@ export function KanbanList({ tours }) {
 
       {tours.length > itemsPerPage && (
         <Pagination
-          count={Math.ceil(tours.length / itemsPerPage)} // Toplam sayfa sayısı
+          count={Math.ceil(tours.length / itemsPerPage)}
           page={page}
           onChange={handlePageChange}
           sx={{

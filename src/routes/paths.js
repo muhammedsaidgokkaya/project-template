@@ -114,6 +114,10 @@ export const paths = {
     },
     kanban: {
       root: `${ROOTS.DASHBOARD}/kanban`,
+      pending: `${ROOTS.DASHBOARD}/kanban/pending`,
+      in_progress: `${ROOTS.DASHBOARD}/kanban/in_progress`,
+      completed: `${ROOTS.DASHBOARD}/kanban/completed`,
+      canceled: `${ROOTS.DASHBOARD}/kanban/canceled`,
       new: `${ROOTS.DASHBOARD}/kanban/new`,
       schema: `${ROOTS.DASHBOARD}/kanban/schema`,
       details: (id) => `${ROOTS.DASHBOARD}/kanban/${id}`,
