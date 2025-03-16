@@ -1,5 +1,5 @@
 import { orderBy } from 'es-toolkit';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { CONFIG } from 'src/global-config';
 import { useBoolean, useSetState } from 'minimal-shared/hooks';
 
@@ -54,34 +54,35 @@ export function KanbanListView() {
   }, []);
 
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash) {
-      const tabFromHash = parseInt(hash.replace('#', ''), 10);
-      if (!isNaN(tabFromHash)) {
-        setTabIndex(tabFromHash);
-      }
-    }
-  }, []);
+  const hash = window.location.hash.replace('#', '');
+  const tabFromHash = parseInt(hash, 10);
+  if (!isNaN(tabFromHash) && [-1, 0, 1, 2, 3].includes(tabFromHash)) {
+    setTabIndex(tabFromHash);
+  }
+}, []);
 
   const handleTabChange = (event, newIndex) => {
     setTabIndex(newIndex);
     window.location.hash = `#${newIndex}`;
+    setTasks([...tasks]);
   };
 
-  const filteredTasks = tasks.filter((task) => {
-    switch (tabIndex) {
-      case 0:
-        return task.state === 0;
-      case 1:
-        return task.state === 1;
-      case 2:
-        return task.state === 2;
-      case 3:
-        return task.state === 3;
-      default:
-        return true;
-    }
-  });
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      switch (tabIndex) {
+        case 0:
+          return task.state === 0;
+        case 1:
+          return task.state === 1;
+        case 2:
+          return task.state === 2;
+        case 3:
+          return task.state === 3;
+        default:
+          return true;
+      }
+    });
+  }, [tasks, tabIndex]);
 
   return (
     <DashboardContent>
@@ -129,7 +130,7 @@ export function KanbanListView() {
       ) : error ? (
         <p></p>
       ) : (
-        <KanbanList tours={filteredTasks} />
+        <KanbanList key={tabIndex} tours={filteredTasks} />
       )}
     </DashboardContent>
   );
