@@ -4,7 +4,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { KanbanNewEditForm } from '../kanban-new-edit-form';
+import { KanbanEditForm } from '../kanban-edit-form';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ export function KanbanEditView({ tour }) {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <KanbanNewEditForm currentTour={tour} />
+      <KanbanEditForm currentTour={tour} />
     </DashboardContent>
   );
 }

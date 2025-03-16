@@ -125,9 +125,9 @@ export function KanbanListView() {
       </Stack>
 
       {loading ? (
-        <p>Veriler yükleniyor...</p>
+        <p></p>
       ) : error ? (
-        <p>Hata: {error}</p>
+        <p></p>
       ) : (
         <KanbanList tours={filteredTasks} />
       )}
