@@ -4,8 +4,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import { useEffect, startTransition } from 'react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
+import trLocale from '@fullcalendar/core/locales/tr';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useBoolean, useSetState } from 'minimal-shared/hooks';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+import { paths } from 'src/routes/paths';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -103,23 +106,25 @@ export function CalendarView() {
   return (
     <>
       <DashboardContent maxWidth="xl" sx={{ ...flexStyles }}>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            mb: { xs: 3, md: 5 },
-          }}
-        >
-          <Typography variant="h4">Calendar</Typography>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-            onClick={onOpenForm}
-          >
-            New event
-          </Button>
-        </Box>
+        <CustomBreadcrumbs
+          heading="Takvim"
+          links={[
+            { name: 'Başlangıç', href: paths.dashboard.root },
+            { name: 'Takvim' },
+          ]}
+          action={
+            <>
+              <Button
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+                onClick={onOpenForm}
+              >
+                Yeni Etkinlik
+              </Button>
+            </>
+          }
+          sx={{ mb: { xs: 3, md: 5 } }}
+        />
 
         {canReset && renderResults()}
 
@@ -182,6 +187,7 @@ export function CalendarView() {
                 timeGridPlugin,
                 interactionPlugin,
               ]}
+              locale={trLocale}
             />
           </CalendarRoot>
         </Card>
@@ -209,7 +215,7 @@ export function CalendarView() {
         }}
       >
         <DialogTitle sx={{ minHeight: 76 }}>
-          {openForm && <> {currentEvent?.id ? 'Edit' : 'Add'} event</>}
+          {openForm && <> Etkinlik {currentEvent?.id ? 'Düzenle' : 'Ekle'}</>}
         </DialogTitle>
 
         <CalendarForm

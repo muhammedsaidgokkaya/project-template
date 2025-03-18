@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
+import { CONFIG } from 'src/global-config';
 
-import axios, { fetcher, endpoints } from 'src/lib/axios';
+import axios, { endpoints } from 'src/lib/axios';
 
 // ----------------------------------------------------------------------
 
@@ -17,49 +18,63 @@ const swrOptions = {
 
 // ----------------------------------------------------------------------
 
+const ENDPOINT = `${CONFIG.apiUrl}/Calendar/calendars`;
+
+const fetcher = async (url) => {
+  const token = localStorage.getItem('jwtToken');
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
 export function useGetEvents() {
-  const { data, isLoading, error, isValidating } = useSWR(CALENDAR_ENDPOINT, fetcher, swrOptions);
+  const { data, isLoading, error, isValidating } = useSWR(ENDPOINT, fetcher);
 
   const memoizedValue = useMemo(() => {
-    const events = data?.events.map((event) => ({ ...event, textColor: event.color }));
+    const events = data?.map((event) => ({
+      ...event,
+      textColor: event.color,
+    })) || [];
 
     return {
-      events: events || [],
+      events,
       eventsLoading: isLoading,
       eventsError: error,
       eventsValidating: isValidating,
-      eventsEmpty: !isLoading && !isValidating && !data?.events.length,
+      eventsEmpty: !isLoading && !isValidating && events.length === 0,
     };
-  }, [data?.events, error, isLoading, isValidating]);
+  }, [data, error, isLoading, isValidating]);
 
   return memoizedValue;
 }
 
 // ----------------------------------------------------------------------
 
-export async function createEvent(eventData) {
-  /**
-   * Work on server
-   */
-  if (enableServer) {
-    const data = { eventData };
-    await axios.post(CALENDAR_ENDPOINT, data);
-  }
+const CREATE_ENDPOINT = `${CONFIG.apiUrl}/Calendar/add-update-calendar`;
 
-  /**
-   * Work in local
-   */
+export async function createEvent(eventData) {
+  const token = localStorage.getItem('jwtToken');
+  const data = { eventData };
+
+  await axios.post(CREATE_ENDPOINT, {
+    id: eventData.id,
+    color: eventData.color,
+    title: eventData.title,
+    allDay: eventData.allDay,
+    description: eventData.description,
+    start: eventData.start,
+    end: eventData.end
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   mutate(
-    CALENDAR_ENDPOINT,
-    (currentData) => {
-      const currentEvents = currentData?.events;
-
-      const events = [...currentEvents, eventData];
-
-      return { ...currentData, events };
-    },
-    false
+    ENDPOINT
   );
 }
 
@@ -79,17 +94,7 @@ export async function updateEvent(eventData) {
    */
 
   mutate(
-    CALENDAR_ENDPOINT,
-    (currentData) => {
-      const currentEvents = currentData?.events;
-
-      const events = currentEvents.map((event) =>
-        event.id === eventData.id ? { ...event, ...eventData } : event
-      );
-
-      return { ...currentData, events };
-    },
-    false
+    ENDPOINT
   );
 }
 
@@ -99,24 +104,24 @@ export async function deleteEvent(eventId) {
   /**
    * Work on server
    */
-  if (enableServer) {
-    const data = { eventId };
-    await axios.patch(CALENDAR_ENDPOINT, data);
-  }
+  
+  const DELETE_ENDPOINT = `${CONFIG.apiUrl}/Calendar/delete-calendar?calendarId=${eventId}`;
+  const token = localStorage.getItem('jwtToken');
+  const response = await fetch(DELETE_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
 
   /**
    * Work in local
    */
 
   mutate(
-    CALENDAR_ENDPOINT,
-    (currentData) => {
-      const currentEvents = currentData?.events;
-
-      const events = currentEvents.filter((event) => event.id !== eventId);
-
-      return { ...currentData, events };
-    },
-    false
+    ENDPOINT
   );
 }

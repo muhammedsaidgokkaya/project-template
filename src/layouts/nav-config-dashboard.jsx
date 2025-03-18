@@ -105,6 +105,16 @@ export const navData = [
             ) },
           { title: 'Analytics', path: paths.dashboard.report.analytics.root, icon: ICONS.analytics },
           { title: 'Search Console', path: paths.dashboard.report.search_console.root, icon: ICONS.search_console },
+          { title: 'Yönetim Raporları', path: paths.dashboard.audience.root, icon: <Iconify icon="icon-park-outline:system" />, disabled: true, 
+            info: (
+              <Label
+                color="info"
+                variant="inverted"
+                startIcon={<Iconify icon="eva:clock-outline" />}
+              >
+                Yakında
+              </Label>
+            ) },
         ],
       },
       // { title: 'Hedef Kitle', path: paths.dashboard.audience.root, icon: ICONS.tagret_group, disabled: true, 
@@ -137,6 +147,8 @@ export const navData = [
       //       Yakında
       //     </Label>
       //   ) },
+      { title: 'Görevler', path: paths.dashboard.kanban.root, icon: ICONS.kanban },
+      { title: 'Takvim', path: paths.dashboard.calendar, icon: ICONS.calendar },
       { title: 'Sohbet', path: paths.dashboard.chat, icon: ICONS.chat, disabled: true, 
         info: (
           <Label
@@ -147,17 +159,6 @@ export const navData = [
             Yakında
           </Label>
         ) },
-      { title: 'Takvim', path: paths.dashboard.calendar, icon: ICONS.calendar, disabled: true, 
-        info: (
-          <Label
-            color="info"
-            variant="inverted"
-            startIcon={<Iconify icon="eva:clock-outline" />}
-          >
-            Yakında
-          </Label>
-        ) },
-      { title: 'Görevler', path: paths.dashboard.kanban.root, icon: ICONS.kanban },
     ],
   },
 ];

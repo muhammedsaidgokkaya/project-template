@@ -66,7 +66,7 @@ export function fDateTime(date, template) {
     return 'Invalid date';
   }
 
-  return dayjs(date).format(template ?? formatPatterns.dateTime);
+  return dayjs(date).locale('tr').format(template ?? formatPatterns.dateTime);
 }
 
 // ----------------------------------------------------------------------
@@ -82,7 +82,7 @@ export function fDate(date, template) {
     return 'Invalid date';
   }
 
-  return dayjs(date).format(template ?? formatPatterns.date);
+  return dayjs(date).locale('tr').format(template ?? formatPatterns.date);
 }
 
 // ----------------------------------------------------------------------
@@ -98,7 +98,7 @@ export function fTime(date, template) {
     return 'Invalid date';
   }
 
-  return dayjs(date).format(template ?? formatPatterns.time);
+  return dayjs(date).locale('tr').format(template ?? formatPatterns.time);
 }
 
 // ----------------------------------------------------------------------
@@ -114,7 +114,7 @@ export function fTimestamp(date) {
     return 'Invalid date';
   }
 
-  return dayjs(date).valueOf();
+  return dayjs(date).locale('tr').valueOf();
 }
 
 // ----------------------------------------------------------------------
@@ -130,7 +130,7 @@ export function fToNow(date) {
     return 'Invalid date';
   }
 
-  return dayjs(date).toNow(true);
+  return dayjs(date).locale('tr').toNow(true);
 }
 
 // ----------------------------------------------------------------------
@@ -174,7 +174,7 @@ export function fIsAfter(startDate, endDate) {
     return false;
   }
 
-  return dayjs(startDate).isAfter(endDate);
+  return dayjs(startDate).locale('tr').isAfter(endDate);
 }
 
 // ----------------------------------------------------------------------
@@ -190,7 +190,7 @@ export function fIsSame(startDate, endDate, unitToCompare) {
     return false;
   }
 
-  return dayjs(startDate).isSame(endDate, unitToCompare ?? 'year');
+  return dayjs(startDate).locale('tr').isSame(endDate, unitToCompare ?? 'year');
 }
 
 /**

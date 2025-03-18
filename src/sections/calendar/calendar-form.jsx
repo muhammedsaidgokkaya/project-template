@@ -20,6 +20,13 @@ import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { Form, Field } from 'src/components/hook-form';
+import { LocalizationProvider, MobileDateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import "dayjs/locale/tr"; // Türkçe dil desteği ekleniyor
+
+// Dayjs dilini Türkçe yap
+dayjs.locale("tr");
 import { ColorPicker } from 'src/components/color-utils';
 
 // ----------------------------------------------------------------------
@@ -27,13 +34,12 @@ import { ColorPicker } from 'src/components/color-utils';
 export const EventSchema = zod.object({
   title: zod
     .string()
-    .min(1, { message: 'Title is required!' })
-    .max(100, { message: 'Title must be less than 100 characters' }),
+    .min(1, { message: 'Başlık alanı zorunludur!' })
+    .max(100, { message: 'Başlık 100 karakterden az olmalıdır!' }),
   description: zod
     .string()
-    .min(1, { message: 'Description is required!' })
-    .min(50, { message: 'Description must be at least 50 characters' }),
-  // Not required
+    .min(1, { message: 'Açıklama alanı zorunludur!' })
+    .max(500, { message: 'Açıklama 500 karakterden az olmalıdır' }),
   color: zod.string(),
   allDay: zod.boolean(),
   start: zod.union([zod.string(), zod.number()]),
@@ -63,7 +69,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
 
   const onSubmit = handleSubmit(async (data) => {
     const eventData = {
-      id: currentEvent?.id ? currentEvent?.id : uuidv4(),
+      id: currentEvent?.id ? currentEvent?.id : 0,
       color: data?.color,
       title: data?.title,
       allDay: data?.allDay,
@@ -75,11 +81,11 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
     try {
       if (!dateError) {
         if (currentEvent?.id) {
-          await updateEvent(eventData);
-          toast.success('Update success!');
+          await createEvent(eventData);
+          toast.success('Güncelleme işlemi başarıyla gerçekleşti!');
         } else {
           await createEvent(eventData);
-          toast.success('Create success!');
+          toast.success('Kayıt işlemi başarıyla gerçekleşti!');
         }
         onClose();
         reset();
@@ -92,7 +98,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
   const onDelete = useCallback(async () => {
     try {
       await deleteEvent(`${currentEvent?.id}`);
-      toast.success('Delete success!');
+      toast.success('Silme işlemi başarıyla gerçekleşti!');
       onClose();
     } catch (error) {
       console.error(error);
@@ -103,24 +109,34 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
     <Form methods={methods} onSubmit={onSubmit}>
       <Scrollbar sx={{ p: 3, bgcolor: 'background.neutral' }}>
         <Stack spacing={3}>
-          <Field.Text name="title" label="Title" />
+          <Field.Text name="title" label="Başlık" />
 
-          <Field.Text name="description" label="Description" multiline rows={3} />
+          <Field.Text name="description" label="Açıklama" multiline rows={3} />
 
-          <Field.Switch name="allDay" label="All day" />
+          <Field.Switch name="allDay" label="Tüm Gün" />
 
-          <Field.MobileDateTimePicker name="start" label="Start date" />
-
-          <Field.MobileDateTimePicker
-            name="end"
-            label="End date"
-            slotProps={{
-              textField: {
-                error: dateError,
-                helperText: dateError ? 'End date must be later than start date' : null,
-              },
-            }}
-          />
+          <LocalizationProvider 
+            dateAdapter={AdapterDayjs} 
+            adapterLocale="tr" 
+            localeText={{
+            cancelButtonLabel: "İptal",
+            okButtonLabel: "Tamam",
+            datePickerToolbarTitle: "Tarih ve Saat Seç",
+            dateTimePickerToolbarTitle: "Tarih ve Saat Seç"
+          }}>
+            <Field.MobileDateTimePicker name="start" label="Başlangıç Tarihi" format="DD MMMM YYYY HH:mm" />
+            <Field.MobileDateTimePicker 
+              name="end" 
+              label="Bitiş Tarihi" 
+              format="DD MMMM YYYY HH:mm"
+              slotProps={{
+                textField: {
+                  error: dateError,
+                  helperText: dateError ? 'Bitiş tarihi başlangıç ​​tarihinden sonra olmalıdır!' : null,
+                },
+              }}
+            />
+          </LocalizationProvider>
 
           <Controller
             name="color"
@@ -138,7 +154,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
 
       <DialogActions sx={{ flexShrink: 0 }}>
         {!!currentEvent?.id && (
-          <Tooltip title="Delete event">
+          <Tooltip title="Etkinliği Sil">
             <IconButton onClick={onDelete}>
               <Iconify icon="solar:trash-bin-trash-bold" />
             </IconButton>
@@ -148,7 +164,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
         <Box sx={{ flexGrow: 1 }} />
 
         <Button variant="outlined" color="inherit" onClick={onClose}>
-          Cancel
+          İptal
         </Button>
 
         <LoadingButton
@@ -157,7 +173,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
           loading={isSubmitting}
           disabled={dateError}
         >
-          Save changes
+          Kaydet
         </LoadingButton>
       </DialogActions>
     </Form>

@@ -4,6 +4,7 @@ import { CONFIG } from 'src/global-config';
 import { useBoolean, useSetState } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
+import { Label } from 'src/components/label';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Tabs from '@mui/material/Tabs';
@@ -67,6 +68,16 @@ export function KanbanListView() {
     setTasks([...tasks]);
   };
 
+  const taskCounts = useMemo(() => {
+    return {
+      all: tasks.length,
+      waiting: tasks.filter(task => task.state === 0).length,
+      inProgress: tasks.filter(task => task.state === 1).length,
+      completed: tasks.filter(task => task.state === 2).length,
+      cancelled: tasks.filter(task => task.state === 3).length,
+    };
+  }, [tasks]);
+
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
       switch (tabIndex) {
@@ -117,11 +128,71 @@ export function KanbanListView() {
 
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         <Tabs value={tabIndex} onChange={handleTabChange} variant="fullWidth">
-          <Tab label="Tümü" value={-1} />
-          <Tab label="Bekliyor" value={0} />
-          <Tab label="Devam Ediyor" value={1} />
-          <Tab label="Tamamlandı" value={2} />
-          <Tab label="İptal Edildi" value={3} />
+          <Tab
+            key={-1}
+            value={-1}
+            label='Tümü'
+            icon={
+              <Label
+                variant='filled'
+                color='default'
+              >
+                {taskCounts.all}
+              </Label>
+            }
+          />
+          <Tab
+            key={0}
+            value={0}
+            label='Bekliyor'
+            icon={
+              <Label
+                variant='soft'
+                color='warning'
+              >
+                {taskCounts.waiting}
+              </Label>
+            }
+          />
+          <Tab
+            key={1}
+            value={1}
+            label='Devam Ediyor'
+            icon={
+              <Label
+                variant='soft'
+                color='info'
+              >
+                {taskCounts.inProgress}
+              </Label>
+            }
+          />
+          <Tab
+            key={2}
+            value={2}
+            label='Tamamlandı'
+            icon={
+              <Label
+                variant='soft'
+                color='success'
+              >
+                {taskCounts.completed}
+              </Label>
+            }
+          />
+          <Tab
+            key={3}
+            value={3}
+            label='İptal Edildi'
+            icon={
+              <Label
+                variant='soft'
+                color='error'
+              >
+                {taskCounts.cancelled}
+              </Label>
+            }
+          />
         </Tabs>
       </Stack>
 

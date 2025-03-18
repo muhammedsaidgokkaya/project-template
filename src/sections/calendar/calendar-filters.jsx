@@ -12,7 +12,19 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { fDate, fDateTime } from 'src/utils/format-time';
+const fDate = (date) => new Intl.DateTimeFormat('tr-TR', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+}).format(new Date(date));
+
+const fDateTime = (date) => new Intl.DateTimeFormat('tr-TR', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+}).format(new Date(date));
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -65,10 +77,10 @@ export function CalendarFilters({
         }}
       >
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Filters
+          Filtreler
         </Typography>
 
-        <Tooltip title="Reset">
+        <Tooltip title="Sıfırla">
           <IconButton onClick={() => resetFilters()}>
             <Badge color="error" variant="dot" invisible={!canReset}>
               <Iconify icon="solar:restart-bold" />
@@ -95,7 +107,7 @@ export function CalendarFilters({
       }}
     >
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
-        Colors
+        Renkler
       </Typography>
       <ColorPicker
         options={colorOptions}
@@ -115,24 +127,24 @@ export function CalendarFilters({
       }}
     >
       <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
-        Range
+        Tarih Aralıkları
       </Typography>
 
       <DatePicker
-        label="Start date"
+        label="Başlangıç Tarihi"
         value={currentFilters.startDate}
         onChange={handleFilterStartDate}
         sx={{ mb: 2.5 }}
       />
 
       <DatePicker
-        label="End date"
+        label="Bitiş Tarihi"
         value={currentFilters.endDate}
         onChange={handleFilterEndDate}
         slotProps={{
           textField: {
             error: dateError,
-            helperText: dateError ? 'End date must be later than start date' : null,
+            helperText: dateError ? 'Bitiş tarihi başlangıç ​​tarihinden sonra olmalıdır!' : null,
           },
         }}
       />
@@ -142,7 +154,7 @@ export function CalendarFilters({
   const renderEvents = () => (
     <>
       <Typography variant="subtitle2" sx={{ px: 2.5, mb: 1 }}>
-        Events ({events.length})
+        Etkinlikler ({events.length})
       </Typography>
 
       <Box component="ul">

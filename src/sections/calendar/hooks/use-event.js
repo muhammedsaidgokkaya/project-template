@@ -1,3 +1,4 @@
+import { useCurrentEditor } from '@tiptap/react';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 
@@ -6,8 +7,7 @@ import { CALENDAR_COLOR_OPTIONS } from 'src/_mock/_calendar';
 // ----------------------------------------------------------------------
 
 export function useEvent(events, selectEventId, selectedRange, openForm) {
-  const currentEvent = events.find((event) => event.id === selectEventId);
-
+  const currentEvent = events.find((event) => event.id === Number(selectEventId));
   const defaultValues = useMemo(
     () => ({
       id: '',
