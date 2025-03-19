@@ -28,6 +28,12 @@ import { _tags, _tourGuides, TOUR_SERVICE_OPTIONS } from 'src/_mock';
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
+export const JOB_EXPERIENCE_OPTIONS = [
+  { label: 'Düşük Öncelik', value: 0 },
+  { label: 'Orta Öncelik', value: 1 },
+  { label: 'Yüksek Öncelik', value: 2 },
+];
+
 // ----------------------------------------------------------------------
 
 export const NewTourSchema = zod
@@ -37,6 +43,11 @@ export const NewTourSchema = zod
       .editor()
       .min(1, { message: 'Açıklama alanı zorunludur!' }),
     durations: schemaHelper.date({ message: { required: 'Bitiş süresi belirleyiniz!' } }),
+    priority: zod
+      .coerce.number()
+      .refine(value => [0, 1, 2].includes(value), {
+        message: 'Geçersiz öncelik!',
+      }),
   });
 
 // ----------------------------------------------------------------------
@@ -160,6 +171,7 @@ export function KanbanEditForm({ currentTour }) {
     name: '',
     content: '',
     durations: null,
+    priority: 1,
     departments: [],
     users: [],
     services: [],
@@ -188,6 +200,7 @@ export function KanbanEditForm({ currentTour }) {
         name: currentTour.name || '',
         content: currentTour.content || '',
         durations: currentTour.durations || null,
+        priority: currentTour.priority,
         departments: currentTour.departments || [],
         users: currentTour.users || [],
         services: currentTour.services || [],
@@ -218,6 +231,7 @@ export function KanbanEditForm({ currentTour }) {
           name: data.name,
           content: data.content,
           durations: data.durations,
+          priority: data.priority,
           departments: selectedDepartments,
           users: selectedUsers.map(user => user.id),
           services: selectedServiceOptions.map(service => service.id),
@@ -250,11 +264,22 @@ export function KanbanEditForm({ currentTour }) {
           <Field.Editor name="content" sx={{ maxHeight: 480 }} />
         </Stack>
 
-        <Stack spacing={1.5}>
-          <Box sx={{ gap: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
-            <Field.DatePicker name="durations" label="Bitiş Tarihi" />
-          </Box>
-        </Stack>
+        <Box sx={{ gap: 2, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
+          <Stack spacing={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Field.RadioGroup
+              row
+              name="priority"
+              options={JOB_EXPERIENCE_OPTIONS}
+              sx={{ gap: 4 }}
+            />
+          </Stack>
+
+          <Stack spacing={1.5}>
+            <Box sx={{ gap: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+              <Field.DatePicker name="durations" label="Bitiş Tarihi" />
+            </Box>
+          </Stack>
+        </Box>
       </Stack>
     </Card>
   );

@@ -74,6 +74,21 @@ export function KanbanItem({ tour, editHref, detailsHref, onDelete }) {
       secondary={
         <Link component={RouterLink} href={detailsHref} color="inherit">
          {tour.name}
+         <Iconify
+            icon={
+              (tour.priority === 0 && 'solar:double-alt-arrow-down-bold-duotone') ||
+              (tour.priority === 1 && 'solar:double-alt-arrow-right-bold-duotone') ||
+              'solar:double-alt-arrow-up-bold-duotone'
+            }
+            sx={{
+              ml: 1,
+              position: 'relative',
+              top: '4px',
+              ...(tour.priority === 0 && { color: 'info.main' }),
+              ...(tour.priority === 1 && { color: 'warning.main' }),
+              ...(tour.priority === 2 && { color: 'error.main' }),
+            }}
+          />
         </Link>
       }
       primaryTypographyProps={{ typography: 'caption', color: 'text.disabled' }}

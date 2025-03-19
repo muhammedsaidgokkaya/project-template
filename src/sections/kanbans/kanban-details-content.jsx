@@ -125,7 +125,22 @@ export function KanbanDetailsContent({ tour, initialServices = [] }) {
       <Box sx={{ mb: 3, display: 'flex' }}>
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
           <BackLink href={paths.dashboard.kanban.root} />
-          {tour?.name} <span style={{ fontSize: '0.5em', color: 'gray' }}>{tour?.department}</span>
+          {tour?.name} <span style={{ fontSize: '0.5em', color: 'gray' }}>{tour?.department}</span> 
+          <Iconify
+            icon={
+              (tour.priority === 0 && 'solar:double-alt-arrow-down-bold-duotone') ||
+              (tour.priority === 1 && 'solar:double-alt-arrow-right-bold-duotone') ||
+              'solar:double-alt-arrow-up-bold-duotone'
+            }
+            sx={{
+              ml: 1,
+              position: 'relative',
+              top: '4px',
+              ...(tour.priority === 0 && { color: 'info.main' }),
+              ...(tour.priority === 1 && { color: 'warning.main' }),
+              ...(tour.priority === 2 && { color: 'error.main' }),
+            }}
+          />
         </Typography>
         <Select value={status} onChange={(event) => handleStatusChange(event, tour.id)} displayEmpty sx={{ maxHeight: 40 }}>
           <MenuItem value="0">Bekliyor</MenuItem>
